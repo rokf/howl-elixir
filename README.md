@@ -14,4 +14,18 @@ The path is prepended to the `PATH` env variable used by Howl so that `mix` and 
 needed executables for Elixir can be found.
 
 **Installation:**
-`git clone` into `~/.howl/bundles`
+- `git clone` into `~/.howl/bundles`
+
+**Dependencies:**
+- `lpeg` (@**luarocks**)
+- `serpent` (@**luarocks**)
+- `elixir` and `mix` ofc
+
+**API generation:**
+To generate your own `api.lua` file you have to
+- write a gsources.lua file next to `generate.lua`
+- it has to return a table with strings, those are paths the script should use to generate the API
+- call `lua generate.lua` and the new `api.lua` file will be generated
+
+**Notes:**
+- The **project path** in Howl has to point to the root of your **mix** project.
