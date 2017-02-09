@@ -19,6 +19,7 @@ needed executables for Elixir can be found.
 **Dependencies:**
 - `lpeg` (@**luarocks**)
 - `serpent` (@**luarocks**)
+- `lfs` (@**luarocks**)
 - `elixir` and `mix` ofc
 
 **API generation:**

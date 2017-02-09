@@ -18,11 +18,53 @@ local C,Ct,Cg,Cp,Cg,Cc =
   lpeg.Cg,
   lpeg.Cc
 
+function capture_fdef(d)
+  local i1,i2 = string.find(d,"%s+do$")
+  if i1 == nil then
+    i1,i2 = string.find(d,",%s*do:")
+  end
+  if i1 ~= nil then
+    local ss = string.sub(d,1,i1-1) -- has to be -1 else the , are still present
+    local b1 = string.find(ss,"%(")
+    if b1 ~= nil then
+      -- found (
+      return { name = string.sub(ss,1,b1-1), args = string.sub(ss,b1,#ss) }
+    else
+      -- didn't find (
+      b1 = string.find(ss,',')
+      if b1 ~= nil then
+        -- found ,
+        return { name = string.sub(ss,1,b1-1), args = "" }
+      else
+        -- no ,
+        return { name = string.gsub(ss," ","") , args = "" }
+      end
+    end
+  else
+    local b1 = string.find(d,"%(")
+    if b1 ~= nil then
+      -- found (
+      return { name = string.sub(d,1,b1-1), args = string.sub(d,b1,#d) }
+    else
+      -- didn't find (
+      b1 = string.find(d,',')
+      if b1 ~= nil then
+        -- found ,
+        return { name = string.sub(d,1,b1-1), args = "" }
+      else
+        -- no ,
+        return { name = d, args = "" }
+      end
+    end
+  end
+end
+
 local H = P {
   'all',
   all = Ct(V('rec')),
   rec = (V'opt' + P(1))^0,
-  opt = V'moduledoc' + V'typedoc' + V'doc' + V'spec' + V'exported_type' + V'defmodule' + V'defprotocol' + V'def' + V'defp',
+  -- opt = V'moduledoc' + V'typedoc' + V'doc' + V'spec' + V'exported_type' + V'defmodule' + V'defprotocol' + V'defmacro' + V'def' + V'defp',
+  opt = V'moduledoc' + V'typedoc' + V'doc' + V'specs' + V'exported_type' + V'defmodule' + V'defprotocol' + V'defmacro' + V'def' + V'defp',
   defmodule = P'defmodule' * V'ws' * (C(V'module_name') / function (mn)
     return { mod = 1, modname = mn }
   end) * V'ws' * P('do'),
@@ -37,47 +79,22 @@ local H = P {
   function (c)
     return { scope = "private", data = c }
   end,
-  fdef = C((P(1) - P('\n'))^1) /
-  function (d)
-    local i1,i2 = string.find(d,"%s+do$")
-    if i1 == nil then
-      i1,i2 = string.find(d,",%s*do:")
-    end
-    if i1 ~= nil then
-      local ss = string.sub(d,1,i1-1) -- has to be -1 else the , are still present
-      local b1 = string.find(ss,"%(")
-      if b1 ~= nil then
-        -- found (
-        return { name = string.sub(ss,1,b1-1), args = string.sub(ss,b1,#ss) }
-      else
-        -- didn't find (
-        b1 = string.find(ss,',')
-        if b1 ~= nil then
-          -- found ,
-          return { name = string.sub(ss,1,b1-1), args = "" }
-        else
-          -- no ,
-          return { name = string.gsub(ss," ","") , args = "" }
-        end
-      end
-    else
-      local b1 = string.find(d,"%(")
-      if b1 ~= nil then
-        -- found (
-        return { name = string.sub(d,1,b1-1), args = string.sub(d,b1,#d) }
-      else
-        -- didn't find (
-        b1 = string.find(d,',')
-        if b1 ~= nil then
-          -- found ,
-          return { name = string.sub(d,1,b1-1), args = "" }
-        else
-          -- no ,
-          return { name = d, args = "" }
-        end
-      end
-    end
+  defmacro = V'ws' * P'defmacro' * V'ws' * V'fdef' /
+  function (c)
+    return { scope = 'public', data = c }
   end,
+  -- old_fdef = C((P(1) - P('\n'))^1) / capture_fdef, -- OLD
+  fdef = Ct(V'left_part' * V'optional_guard' * V'right_part'),
+  left_part = V'name_with_brackets' + V'name_no_brackets', -- OPTIMIZE?
+  name_with_brackets = C(V'fident') * C(P'(' * (P(1) - P')')^1 * P')'),
+  name_no_brackets = C(V'fident'),
+  optional_guard = C(V'ws' * P'when' * (P(1) - P'do')^1)^-1,
+  right_part = P' '^0  * (P'do' + (P',' * V'ows' * P'do:') + P'\n'),
+  specs = Ct(Cg(Cc('spec'), 'tag') * Cg(C(P'@spec' * (P(1) - P('def '))^1), 'spec_content')), -- RE-ENABLE
+  -- prefix = P'(' * V'prefix_operator' * R'az' * P')',
+  -- prefix_operator = S'+-',
+  -- left_right = P'left' * V'ows' * (P(1) - P'right')^1 * P'right',
+  -- first_last = P'first' * V'ows' * (P(1) - P'last')^1 * P'last',
   module_name = R('AZ') * R('az','AZ')^0 * (P('.') * R('AZ') * R('az','AZ')^0)^0,
   moduledoc = P'@moduledoc' * V'ws' * (V'doc_secondary'/ function (str) return { docs = 1, doctype = 'mod', txt = str } end),
   doc = P'@doc' * V'ws' * (V'doc_secondary' / function (str) return { docs = 1, doctype = 'doc', txt = str } end),
@@ -85,7 +102,7 @@ local H = P {
   exported_type = P'@type' * V'ws' * Ct(Cg(C((R('az') + S('_'))^1), 'type_name') * V'ws' * P'::' * V'ws' * Cg(C((P(1) - P('\n'))^1),'type_def')),
   doc_secondary = (V'multiline_string' + C(P"false") + (P'~S' * V'multiline_string')),
   multiline_string = P('"""') * C((P(1) - P('"""'))^0) * P('"""'),
-  spec = P'@spec' * V'ws' * Ct(Cg(C(V'fident'),'spec_fname') * Cg(C((P(1) - P('\n'))^1), 'spec_other')),
+  -- spec = P'@spec' * V'ws' * Ct(Cg(C(V'fident'),'spec_fname') * Cg(C((P(1) - P('\n'))^1), 'spec_other')),
   fident = (R('az') + P('_')) * (R('az','AZ','09') + P('_'))^0 * (S('!?'))^-1,
   ows = S(' \n\t\r')^0,
   ws = S(' \n\t\r')^1
@@ -97,7 +114,7 @@ function run_over_matches(mc)
   local current_doc = ""
   local current_mod = whole_api
   local current_typedoc = ""
-  local current_spec = {}
+  local current_spec = ""
   for i,v in ipairs(mc) do
     if v.mod ~= nil then -- new module
       current_mod = whole_api -- reset to root
@@ -109,42 +126,94 @@ function run_over_matches(mc)
         current_mod = current_mod[m]
       end
     end
+
     if v.docs ~= nil then -- one of the docs
-        if current_mod.description == nil and v.doctype == "mod" then
-          current_mod.description = v.txt
-        elseif v.doctype == "doc" then
-          current_doc = v.txt
-        elseif v.doctype == "type" then
-          current_typedoc = v.txt
-        end
+      if current_mod.description == nil and v.doctype == "mod" then
+        current_mod.description = v.txt
+      elseif v.doctype == "doc" then
+        current_doc = v.txt
+      elseif v.doctype == "type" then
+        current_typedoc = v.txt
+      end
     end
-    if v.scope == "public" then -- public function
-        if current_mod[v.data.name] == nil then
-          current_mod[v.data.name] = {}
-          if current_spec.spec_fname == v.data.name then
-            current_mod[v.data.name].description = current_spec.spec_fname .. current_spec.spec_other .. '\n' .. v.data.name .. v.data.args .. "\n" .. current_doc
-            current_spec = {}
-          else
-            current_mod[v.data.name].description = v.data.name .. v.data.args .. "\n" .. current_doc
-          end
-        else
-          if current_spec.spec_fname == v.data.name then
-            current_mod[v.data.name].description = current_spec.spec_fname .. current_spec.spec_other .. '\n' .. v.data.name .. v.data.args .. "\n" .. current_mod[v.data.name].description
-            current_spec = {}
-          else
-            current_mod[v.data.name].description = v.data.name .. v.data.args .. "\n" .. current_mod[v.data.name].description
-          end
-        end
+
+    if v.scope == "public" then
+      local function_name = v.data[1]
+      if current_mod[function_name] == nil then
+        current_mod[function_name] = {}
+        current_mod[function_name].description = current_spec .. '\n' .. table.concat(v.data) .. "\n" .. current_doc
+        current_spec = ""
+        current_doc = ""
+      else
+        current_mod[function_name].description = current_spec .. '\n' .. table.concat(v.data) .. current_doc ..  "\n" .. current_mod[function_name].description
+        current_spec = ""
+        current_doc = ""
+      end
     end
+
     if v.type_name then -- it is a type
       current_mod[v.type_name] = {}
       current_mod[v.type_name].description = v.type_name .. ' :: ' .. v.type_def .. "\n" .. current_typedoc
     end
-    if v.spec_fname then -- it is a spec
-      current_spec = v
+
+    if v.tag == "spec" then -- it is a spec
+      current_spec = v.spec_content
     end
   end
 end
+
+-- function run_over_matches(mc)
+--   local current_doc = ""
+--   local current_mod = whole_api
+--   local current_typedoc = ""
+--   local current_spec = {}
+--   for i,v in ipairs(mc) do
+--     if v.mod ~= nil then -- new module
+--       current_mod = whole_api -- reset to root
+--       for m in string.gmatch(v.modname, "%a+") do
+--         print('MOD:',m)
+--         if current_mod[m] == nil then
+--           current_mod[m] = {}
+--         end
+--         current_mod = current_mod[m]
+--       end
+--     end
+--     if v.docs ~= nil then -- one of the docs
+--       if current_mod.description == nil and v.doctype == "mod" then
+--         current_mod.description = v.txt
+--       elseif v.doctype == "doc" then
+--         current_doc = v.txt
+--       elseif v.doctype == "type" then
+--         current_typedoc = v.txt
+--       end
+--     end
+--     if v.scope == "public" then
+--       if current_mod[v.data.name] == nil then
+--         current_mod[v.data.name] = {}
+--         if current_spec.spec_fname == v.data.name then
+--           current_mod[v.data.name].description = current_spec.spec_fname .. current_spec.spec_other .. '\n' .. v.data.name .. v.data.args .. "\n" .. current_doc
+--           current_spec = {}
+--         else
+--           current_mod[v.data.name].description = v.data.name .. v.data.args .. "\n" .. current_doc
+--         end
+--       else
+--         if current_spec.spec_fname == v.data.name then
+--           current_mod[v.data.name].description = current_spec.spec_fname .. current_spec.spec_other .. '\n' .. v.data.name .. v.data.args .. "\n" .. current_mod[v.data.name].description
+--           current_spec = {}
+--         else
+--           current_mod[v.data.name].description = v.data.name .. v.data.args .. "\n" .. current_mod[v.data.name].description
+--         end
+--       end
+--     end
+--     if v.type_name then -- it is a type
+--       current_mod[v.type_name] = {}
+--       current_mod[v.type_name].description = v.type_name .. ' :: ' .. v.type_def .. "\n" .. current_typedoc
+--     end
+--     if v.spec_fname then -- it is a spec
+--       current_spec = v
+--     end
+--   end
+-- end
 
 function attrdir (path)
   for file in lfs.dir(path) do

@@ -5,6 +5,7 @@ credo = bundle_load 'credo_parser'
 import Process from howl.io
 
 general_path = Process.execute('echo $PATH')
+home_path = Process.execute('echo $HOME')
 
 insp = (buffer) ->
   proj = howl.Project.for_file(howl.app.editor.buffer.file)
@@ -18,7 +19,7 @@ insp = (buffer) ->
     output, err = Process.execute('mix credo', {
       working_directory: proj.root.path
       env: {
-        HOME: '/home/rokf'
+        HOME: home_path
         PATH: combined_path
         LC_ALL: 'en_US.UTF-8'
       }
@@ -29,7 +30,7 @@ insp = (buffer) ->
     output, err = Process.execute('mix dogma', {
       working_directory: proj.root.path
       env: {
-        HOME: '/home/rokf'
+        HOME: home_path
         PATH: combined_path
         LC_ALL: 'en_US.UTF-8'
       }
