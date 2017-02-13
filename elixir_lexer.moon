@@ -5,7 +5,7 @@ howl.util.lpeg_lexer ->
   c = capture
 
   kw = c 'keyword', word {
-    'cond','case', 'defmodule', 'defstruct', 'defprotocol', 'defexception',
+    'cond','case', 'defmodule', 'defstruct', 'defmacro', 'defprotocol', 'defexception', 'defdelegate'
     'defimpl', 'try','catch', 'do', 'end', 'after', 'if', 'else', 'unless',
     'fn','defp','def', 'and', 'or', 'rescue',
     'receive', 'alias', 'use', 'require', 'import', 'for', 'when'
