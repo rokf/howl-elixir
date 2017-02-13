@@ -1,5 +1,3 @@
--- Copyright 2014-2015 The Howl Developers
--- License: MIT (see LICENSE.md)
 
 howl.util.lpeg_lexer ->
   c = capture
@@ -66,53 +64,6 @@ howl.util.lpeg_lexer ->
   }
 
   ws = c 'whitespace', blank^0
-
-  -- fdecl = any {
-  --   sequence {
-  --     c('keyword', 'function'),
-  --     c 'whitespace', blank^1,
-  --     c('fdecl', ident * (S':.' * ident)^-1)
-  --   },
-  --   sequence {
-  --     c('fdecl', ident),
-  --     ws,
-  --     c('operator', '='),
-  --     ws,
-  --     c('keyword', 'function'),
-  --     -#any(digit, alpha)
-  --   }
-  -- }
-
-  -- cdef = sequence {
-  --   any {
-
-  --     sequence {
-  --       c('identifier', 'ffi'),
-  --       c('operator', '.'),
-  --     },
-  --     line_start
-  --   },
-  --   c('identifier', 'cdef'),
-  --   c('operator', '(')^-1,
-  --   ws,
-  --   any {
-  --     sequence {
-  --       c('string', bracket_quote_lvl_start),
-  --       sub_lex('c', bracket_quote_lvl_end),
-  --       c('string', bracket_quote_lvl_end)^-1,
-  --     },
-  --     sequence {
-  --       c('string', '"'),
-  --       sub_lex('c', '"'),
-  --       c('string', '"')^-1,
-  --     },
-  --     sequence {
-  --       c('string', "'"),
-  --       sub_lex('c', "'"),
-  --       c('string', "'")^-1,
-  --     }
-  --   }
-  -- }
 
   any {
     number,

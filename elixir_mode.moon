@@ -9,11 +9,11 @@ class ElixirMode
   new: =>
     @api = bundle_load 'api'
     @lexer = bundle_load 'elixir_lexer'
-    @completers = { 'api','in_buffer' } -- , 'elixir_completer'
+    @completers = { 'api','in_buffer' }
 
   comment_syntax: '#'
 
-  resolve_type: (context) => -- (mode, context) ~ a method
+  resolve_type: (context) => -- fat arrow because it is a method
     scope_changes = pattern_utils.find_scope_changers(howl.app.editor.buffer.text)
     pfx = context.prefix
     parts = {}
@@ -22,7 +22,6 @@ class ElixirMode
     fname = all_parts[#all_parts]
     leading = pfx\umatch r'((?:\\w+[.:])*\\w+)[.:]\\w*[\\!\\?]?$'
     parts = [p for p in leading\gmatch '[%w%?_%!]+'] if leading
-    -- print(leading, serpent.block(parts, {comment: false}), fname)
     for entry in *scope_changes
       if entry.tag == 'import'
         current_scope = @api
@@ -95,21 +94,21 @@ class ElixirMode
   }
 
   default_config: {
-    complete: 'manual'
-    word_pattern: '[%w?_!]+' -- add %d?
-    inspectors: { 'elixir' }
-    auto_inspect: 'save'
+    complete: 'manual' -- manually activate completions
+    word_pattern: '[%w?_!]+' -- isn't used by default from API related func
+    inspectors: { 'elixir' } -- dogma and credo checks
+    auto_inspect: 'save' -- inspect only on save
   }
 
   indentation: {
-    more_after: {
-      r'[({=]\\s*(--.*|)$' -- hanging operators
-      r'\\bdo\\b\\s*(#.*|)$', -- block starters
-      { '^%s*if%s+', '%s+end$' }
-      r'^\\s*else\\b',
+    more_after: { -- indentation increase
+      r'[({=]\\s*(#.*|)$' -- braces
+      r'\\b(do)\\b\\s*(#.*|)$' -- blocks
+      r'->\\s*(#.*|)$' -- after arrow
+      r'^\\s*else\\b'
     }
 
-    less_for: {
+    less_for: { -- indentation decrease
       r'^\\s*end\\b'
       '^%s*}'
       r'^\\s*else\\b'
@@ -122,7 +121,7 @@ class ElixirMode
       { r'(^\\s*|\\s+)do\\s*$', '^%s*end', 'end' },
     }
 
-  structure: (editor) =>
+  structure: (editor) => -- show anything that starts with 'def' and is preceded with possible spaces
     b = editor.buffer
     l = {}
     for line in *b.lines
