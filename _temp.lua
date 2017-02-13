@@ -57,3 +57,44 @@
 --     end
 --   end
 -- end
+
+function capture_fdef(d)
+  local i1,i2 = string.find(d,"%s+do$")
+  if i1 == nil then
+    i1,i2 = string.find(d,",%s*do:")
+  end
+  if i1 ~= nil then
+    local ss = string.sub(d,1,i1-1) -- has to be -1 else the , are still present
+    local b1 = string.find(ss,"%(")
+    if b1 ~= nil then
+      -- found (
+      return { name = string.sub(ss,1,b1-1), args = string.sub(ss,b1,#ss) }
+    else
+      -- didn't find (
+      b1 = string.find(ss,',')
+      if b1 ~= nil then
+        -- found ,
+        return { name = string.sub(ss,1,b1-1), args = "" }
+      else
+        -- no ,
+        return { name = string.gsub(ss," ","") , args = "" }
+      end
+    end
+  else
+    local b1 = string.find(d,"%(")
+    if b1 ~= nil then
+      -- found (
+      return { name = string.sub(d,1,b1-1), args = string.sub(d,b1,#d) }
+    else
+      -- didn't find (
+      b1 = string.find(d,',')
+      if b1 ~= nil then
+        -- found ,
+        return { name = string.sub(d,1,b1-1), args = "" }
+      else
+        -- no ,
+        return { name = d, args = "" }
+      end
+    end
+  end
+end

@@ -18,47 +18,6 @@ local C,Ct,Cg,Cp,Cg,Cc =
   lpeg.Cg,
   lpeg.Cc
 
-function capture_fdef(d)
-  local i1,i2 = string.find(d,"%s+do$")
-  if i1 == nil then
-    i1,i2 = string.find(d,",%s*do:")
-  end
-  if i1 ~= nil then
-    local ss = string.sub(d,1,i1-1) -- has to be -1 else the , are still present
-    local b1 = string.find(ss,"%(")
-    if b1 ~= nil then
-      -- found (
-      return { name = string.sub(ss,1,b1-1), args = string.sub(ss,b1,#ss) }
-    else
-      -- didn't find (
-      b1 = string.find(ss,',')
-      if b1 ~= nil then
-        -- found ,
-        return { name = string.sub(ss,1,b1-1), args = "" }
-      else
-        -- no ,
-        return { name = string.gsub(ss," ","") , args = "" }
-      end
-    end
-  else
-    local b1 = string.find(d,"%(")
-    if b1 ~= nil then
-      -- found (
-      return { name = string.sub(d,1,b1-1), args = string.sub(d,b1,#d) }
-    else
-      -- didn't find (
-      b1 = string.find(d,',')
-      if b1 ~= nil then
-        -- found ,
-        return { name = string.sub(d,1,b1-1), args = "" }
-      else
-        -- no ,
-        return { name = d, args = "" }
-      end
-    end
-  end
-end
-
 function mnpat(start,stop)
   return start * ((V'bp' + P(1)) - stop)^0 * stop
 end
@@ -124,53 +83,53 @@ local H = P {
 local whole_api = {}
 
 function run_over_matches(mc)
-  local current_doc = ""
-  local current_mod = whole_api
-  local current_typedoc = ""
-  local current_spec = ""
+  local cd = "" -- current doc
+  local cm = whole_api -- current module
+  local ctd = "" -- current typedoc
+  local cs = "" -- current spec
   for i,v in ipairs(mc) do
     if v.mod ~= nil then -- new module
-      current_mod = whole_api -- reset to root
+      cm = whole_api -- reset to root
       for m in string.gmatch(v.modname, "%a+") do
         -- print('MOD:',m)
-        if current_mod[m] == nil then
-          current_mod[m] = {}
+        if cm[m] == nil then
+          cm[m] = {}
         end
-        current_mod = current_mod[m]
+        cm = cm[m]
       end
     end
 
     if v.docs ~= nil then -- one of the docs
-      if current_mod.description == nil and v.doctype == "mod" then
-        current_mod.description = v.txt
+      if cm.description == nil and v.doctype == "mod" then
+        cm.description = v.txt
       elseif v.doctype == "doc" then
-        current_doc = v.txt
+        cd = v.txt
       elseif v.doctype == "type" then
-        current_typedoc = v.txt
+        ctd = v.txt
       end
     end
 
     if v.scope == "public" then
-      local function_name = v.data[1]
-      if current_mod[function_name] == nil then
-        current_mod[function_name] = {}
-        current_mod[function_name].description = current_spec .. '\n' .. table.concat(v.data) .. "\n" .. current_doc
-        current_spec = ""
-        current_doc = ""
+      local fn = v.data[1] -- function name
+      if cm[fn] == nil then
+        cm[fn] = {}
+        cm[fn].description = cs .. '\n' .. table.concat(v.data) .. "\n" .. cd
+        cs = ""
+        cd = ""
       else
-        current_mod[function_name].description = current_spec .. '\n' .. table.concat(v.data) .. current_doc ..  "\n" .. current_mod[function_name].description
-        current_spec = ""
-        current_doc = ""
+        cm[fn].description = cs .. '\n' .. table.concat(v.data) .. cd ..  "\n" .. cm[fn].description
+        cs = ""
+        cd = ""
       end
     end
 
     if v.type_name then -- it is a type
-      current_mod[v.type_name] = {}
-      current_mod[v.type_name].description = v.type_name .. ' :: ' .. v.type_def .. "\n" .. current_typedoc
+      cm[v.type_name] = {}
+      cm[v.type_name].description = v.type_name .. ' :: ' .. v.type_def .. "\n" .. ctd
     end
 
     if v.tag == "spec" then -- it is a spec
-      current_spec = v.spec_content
+      cs = v.spec_content
     end
   end
 end
