@@ -1,3 +1,5 @@
+![Drawing](drawing.svg)
+
 #### Elixir bundle for Howl
 
 **Includes**:
