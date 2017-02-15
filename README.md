@@ -1,6 +1,4 @@
-![Drawing](drawing.svg)
-
-#### Elixir bundle for Howl
+![Drawing](elixir.png)
 
 **Includes**:
 - API **completion** and **docs** with respect for imports and aliases
