@@ -18,13 +18,15 @@ local C,Ct,Cg,Cp,Cg,Cc =
 
 local CREDO = {}
 
+-- arrows: ↑↗→↘↓
+
 local grammar = P {
   'all',
   all = Ct(V('rec')),
   rec = (V'options' + P(1))^0,
   options = V'log',
   -- location = Ct(V'ws' * V'filename' * V'linen' * V'charn' * V'ws' * P'(' * V'ident_path' * P')'),
-  log = Ct(V'logtype' * V'ws' * P'→' * V'ws' * V'message' * V'ws' * P'┃' * V'ws' * V'location'),
+  log = Ct(V'logtype' * V'ws' * S'↑↗→↘↓' * V'ws' * V'message' * V'ws' * P'┃' * V'ws' * V'location'),
   location = V'filename' * V'linen' * V'charn' * V'ws' * P'(' * V'ident_path' * P')',
   logtype = P'[' * Cg((C(R('AZ')) / function (mt)
     print('MT', mt)

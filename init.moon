@@ -18,7 +18,7 @@ unload = ->
 
 howl.config.define({
   name: 'elixir_linter'
-  description: 'The linter which Elixir should use'
+  description: 'Chosen Elixir linter'
   type_of: 'string'
   options: {
     'dogma',
