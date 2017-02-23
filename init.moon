@@ -4,16 +4,25 @@ mode_reg =
   extensions: { 'ex', 'exs' }
   create: bundle_load('elixir_mode')
 
+howl.mode.register(mode_reg)
+
+mode_reg_eex =
+  name: 'eex'
+  extensions: { 'eex' }
+  create: -> bundle_load('eex_mode')
+
+howl.mode.register(mode_reg_eex)
+
 howl.inspection.register {
   name: 'elixir'
   factory: ->
     bundle_load 'elixir_inspector'
 }
 
-howl.mode.register(mode_reg)
 
 unload = ->
   howl.mode.unregister 'elixir'
+  howl.mode.unregister 'eex'
   howl.inspection.unregister 'elixir'
 
 howl.config.define({
