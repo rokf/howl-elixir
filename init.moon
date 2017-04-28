@@ -19,7 +19,6 @@ howl.inspection.register {
     bundle_load 'elixir_inspector'
 }
 
-
 unload = ->
   howl.mode.unregister 'elixir'
   howl.mode.unregister 'eex'

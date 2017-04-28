@@ -9,8 +9,7 @@ home_path = Process.execute('echo $HOME')
 
 insp = (buffer) ->
   proj = howl.Project.for_file(howl.app.editor.buffer.file)
-  if proj == nil
-    return nil
+  if proj == nil then return nil
   output = ""
   combined_path = howl.config.elixir_path .. ':' .. general_path
   print(combined_path)
@@ -40,8 +39,7 @@ insp = (buffer) ->
   else -- 'none'
     return nil
 
-  if #outp == 0
-    return nil
+  if #outp == 0 then return nil
   return outp
 
 return insp

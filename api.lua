@@ -2776,8 +2776,11 @@ return {
   List = {
     Chars = {
       description = "\n  The List.Chars protocol is responsible for\n  converting a structure to a list (only if applicable).\n  The only function required to be implemented is\n  `to_charlist` which does the conversion.\n\n  The `to_charlist/1` function automatically imported\n  by `Kernel` invokes this protocol.\n  ",
+      to_char_list = {
+        description = "\nto_char_list(term)\nfalse"
+      },
       to_charlist = {
-        description = "\nto_charlist(term)\n\nto_charlist(term)\n\nto_charlist(list)\n\nto_charlist(term)\n\nto_charlist(term) when is_binary(term) \n  Returns the given binary `term` converted to a charlist.\n  \n\nto_charlist(atom)false\n\nto_charlist(term)\n"
+        description = "\nto_charlist(term)\n\nto_charlist(term)\n\nto_charlist(list)\n\nto_charlist(term)\n\nto_charlist(term) when is_binary(term) \n  Returns the given binary `term` converted to a charlist.\n  \n\nto_charlist(atom)\n\nto_charlist(term)\n"
       }
     },
     delete = {
@@ -3862,7 +3865,7 @@ return {
       description = "\n__impl__(:for)\n\n__impl__(:protocol)\n\n__impl__(:target)false\n\n__impl__(:protocol)\n\n__impl__(:target)\n\n__impl__(:for)false\n\n__impl__(protocol, opts)\nfalse"
     },
     __protocol__ = {
-      description = "\n__protocol__(name, [do: block])\nfalse"
+      description = "\n__protocol__(:consolidated?)\n\n__protocol__(:functions)\n\n__protocol__(:module)false\n\n__protocol__(name, [do: block])\nfalse"
     },
     ["__spec__?"] = {
       description = "\n__spec__?(module, name, arity)\nfalse"
@@ -3891,6 +3894,12 @@ return {
     },
     extract_protocols = {
       description = "\nextract_protocols(paths)\n\n  Extracts all protocols from the given paths.\n\n  The paths can be either a charlist or a string. Internally\n  they are worked on as charlists, so passing them as lists\n  avoid extra conversion.\n\n  Does not load any of the protocols.\n\n  ## Examples\n\n      # Get Elixir's ebin and retrieve all protocols\n      iex> path = :code.lib_dir(:elixir, :ebin)\n      iex> mods = Protocol.extract_protocols([path])\n      iex> Enumerable in mods\n      true\n\n  "
+    },
+    impl_for = {
+      description = "\nimpl_for(_)\n\nimpl_for(data) when :erlang.unquote(guard)(data) \n\nimpl_for(%{__struct__: struct}) when :erlang.is_atom(struct) \n\nimpl_for(data)\nfalse"
+    },
+    ["impl_for!"] = {
+      description = "\nimpl_for!(data)\nfalse"
     },
     t = {
       description = "t :: term\n"
