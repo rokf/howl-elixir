@@ -8,21 +8,16 @@ local P,R,S,V =
   lpeg.S,
   lpeg.V
 
-local C,Ct,Cg,Cp,Cg,Cc =
+local C,Ct,Cg =
   lpeg.C,
   lpeg.Ct,
-  lpeg.Cg,
-  lpeg.Cp,
-  lpeg.Cg,
-  lpeg.Cc
+  lpeg.Cg
 
 local DOGMA = {}
 
 local last_filename = ""
-
 local grammar = P {
-  'all',
-  all = Ct(V('rec')),
+  Ct(V('rec')),
   rec = (V'options' + P(1))^0,
   options = V'header' + V'log',
   header = P'==' * V'ws' * (V'filename' / function (f)
@@ -43,7 +38,7 @@ local grammar = P {
 function DOGMA.parse(report, fname_filter, root_path)
   local matches = grammar:match(report)
   local filtered = {}
-  for i,v in ipairs(matches) do
+  for _,v in ipairs(matches) do
     if (root_path .. '/' .. v.filename) == string.format("%s",fname_filter) then
       table.insert(filtered, v)
     end

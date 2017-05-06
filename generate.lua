@@ -10,15 +10,13 @@ local P,R,S,V =
   lpeg.S,
   lpeg.V
 
-local C,Ct,Cg,Cp,Cg,Cc =
+local C,Ct,Cg,Cc =
   lpeg.C,
   lpeg.Ct,
   lpeg.Cg,
-  lpeg.Cp,
-  lpeg.Cg,
   lpeg.Cc
 
-function mnpat(start,stop)
+local function mnpat(start,stop)
   return start * ((V'bp' + P(1)) - stop)^0 * stop
 end
 
@@ -82,12 +80,12 @@ local H = P {
 
 local whole_api = {}
 
-function run_over_matches(mc)
+local function run_over_matches(mc)
   local cd = "" -- current doc
   local cm = whole_api -- current module
   local ctd = "" -- current typedoc
   local cs = "" -- current spec
-  for i,v in ipairs(mc) do
+  for _,v in ipairs(mc) do
     if v.mod ~= nil then -- new module
       cm = whole_api -- reset to root
       for m in string.gmatch(v.modname, "%a+") do
@@ -134,7 +132,7 @@ function run_over_matches(mc)
   end
 end
 
-function attrdir (path)
+local function attrdir (path)
   for file in lfs.dir(path) do
     if file ~= "." and file ~= ".." then
       local f = path..'/'..file
@@ -144,9 +142,9 @@ function attrdir (path)
       if attr.mode == "directory" then
         attrdir (f)
       else
-        local file = io.open(f)
-        txt = file:read('*all')
-        file:close()
+        local sourcefile = io.open(f)
+        local txt = sourcefile:read('*all')
+        sourcefile:close()
         local m = H:match(txt)
         run_over_matches(m)
       end
@@ -167,6 +165,6 @@ for k,v in pairs(whole_api['Kernel']) do
   end
 end
 
-local file = io.open('api.lua', "w")
-file:write("return " .. serpent.block(whole_api,{comment = false}))
-file:close()
+local apifile = io.open('api.lua', "w")
+apifile:write("return " .. serpent.block(whole_api,{comment = false}))
+apifile:close()

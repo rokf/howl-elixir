@@ -8,33 +8,25 @@ local P,R,S,V =
   lpeg.S,
   lpeg.V
 
-local C,Ct,Cg,Cp,Cg,Cc =
+local C,Ct,Cg =
   lpeg.C,
   lpeg.Ct,
-  lpeg.Cg,
-  lpeg.Cp,
-  lpeg.Cg,
-  lpeg.Cc
+  lpeg.Cg
 
 local CREDO = {}
 
 -- arrows: ↑↗→↘↓
 
 local grammar = P {
-  'all',
-  all = Ct(V('rec')),
+  Ct(V('rec')),
   rec = (V'options' + P(1))^0,
   options = V'log',
   -- location = Ct(V'ws' * V'filename' * V'linen' * V'charn' * V'ws' * P'(' * V'ident_path' * P')'),
   log = Ct(V'logtype' * V'ws' * S'↑↗→↘↓' * V'ws' * V'message' * V'ws' * P'┃' * V'ws' * V'location'),
   location = V'filename' * V'linen' * V'charn' * V'ws' * P'(' * V'ident_path' * P')',
-  logtype = P'[' * Cg((C(R('AZ')) / function (mt)
-    print('MT', mt)
-    if mt == 'E' then
-      return 'error'
-    else
-      return 'warning'
-    end
+  logtype = P'[' * Cg((C(R('AZ')) / function (c)
+    if c == 'E' then return 'error' end
+    return 'warning'
   end), 'type') * P']',
   message = Cg(C((P(1) - P('\n'))^1) / function (msg) print(msg); return msg; end, 'message'),
   filename = Cg(C((P(1) - P(':'))^1), 'filename') * P':',
@@ -51,7 +43,7 @@ local grammar = P {
 function CREDO.parse(report, fname_filter, root_path)
   local matches = grammar:match(report)
   local filtered = {}
-  for i,v in ipairs(matches) do
+  for _,v in ipairs(matches) do
     if (root_path .. '/' .. v.filename) == string.format("%s",fname_filter) then
       table.insert(filtered, v)
     end

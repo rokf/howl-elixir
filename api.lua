@@ -1,9 +1,4 @@
 return {
-  A = {
-    __before_compile__ = {
-      description = "\n__before_compile__(_env)\n"
-    }
-  },
   Access = {
     at = {
       description = "\nat(index) when index >= 0 \n\n  Returns a function that accesses the element at `index` (zero based) of a list.\n\n  The returned function is typically passed as an accessor to `Kernel.get_in/2`,\n  `Kernel.get_and_update_in/3`, and friends.\n\n  ## Examples\n\n      iex> list = [%{name: \"john\"}, %{name: \"mary\"}]\n      iex> get_in(list, [Access.at(1), :name])\n      \"mary\"\n      iex> get_and_update_in(list, [Access.at(0), :name], fn\n      ...>   prev -> {prev, String.upcase(prev)}\n      ...> end)\n      {\"john\", [%{name: \"JOHN\"}, %{name: \"mary\"}]}\n\n  `at/1` can also be used to pop elements out of a list or\n  a key inside of a list:\n\n      iex> list = [%{name: \"john\"}, %{name: \"mary\"}]\n      iex> pop_in(list, [Access.at(0)])\n      {%{name: \"john\"}, [%{name: \"mary\"}]}\n      iex> pop_in(list, [Access.at(0), :name])\n      {\"john\", [%{}, %{name: \"mary\"}]}\n\n  When the index is out of bounds, `nil` is returned and the update function is never called:\n\n      iex> list = [%{name: \"john\"}, %{name: \"mary\"}]\n      iex> get_in(list, [Access.at(10), :name])\n      nil\n      iex> get_and_update_in(list, [Access.at(10), :name], fn\n      ...>   prev -> {prev, String.upcase(prev)}\n      ...> end)\n      {nil, [%{name: \"john\"}, %{name: \"mary\"}]}\n\n  An error is raised for negative indexes:\n\n      iex> get_in([], [Access.at(-1)])\n      ** (FunctionClauseError) no function clause matching in Access.at/1\n\n  An error is raised if the accessed structure is not a list:\n\n      iex> get_in(%{}, [Access.at(1)])\n      ** (RuntimeError) Access.at/1 expected a list, got: %{}\n  "
@@ -177,7 +172,6 @@ return {
       description = "\nto_string(atom)\n\n  Converts an atom to a string.\n\n  Inlined by the compiler.\n\n  ## Examples\n\n      iex> Atom.to_string(:foo)\n      \"foo\"\n\n  "
     }
   },
-  B = {},
   BadArityError = {
     message = {
       description = "\nmessage(exception)\n"
@@ -481,53 +475,8 @@ return {
     }
   },
   CompileError = {
-    compile = {
-      description = "\ncompile(source, options) when is_list(options) \n\ncompile(source, options) when is_binary(options) \n\ncompile(source, options \\\\ \"\")\n\n  Compiles the regular expression.\n\n  The given options can either be a binary with the characters\n  representing the same regex options given to the `~r` sigil,\n  or a list of options, as expected by the Erlang's [`:re` module](http://www.erlang.org/doc/man/re.html).\n\n  It returns `{:ok, regex}` in case of success,\n  `{:error, reason}` otherwise.\n\n  ## Examples\n\n      iex> Regex.compile(\"foo\")\n      {:ok, ~r\"foo\"}\n\n      iex> Regex.compile(\"*foo\")\n      {:error, {'nothing to repeat', 0}}\n\n  "
-    },
-    ["compile!"] = {
-      description = "\ncompile!(source, options \\\\ \"\")\n\n  Compiles the regular expression according to the given options.\n  Fails with `Regex.CompileError` if the regex cannot be compiled.\n  "
-    },
-    escape = {
-      description = "\nescape(string) when is_binary(string) \n\n  Escapes a string to be literally matched in a regex.\n\n  ## Examples\n\n      iex> Regex.escape(\".\")\n      \"\\\\.\"\n\n      iex> Regex.escape(\"\\\\what if\")\n      \"\\\\\\\\what\\\\ if\"\n\n  "
-    },
-    ["match?"] = {
-      description = "\nmatch?(%Regex{re_pattern: compiled}, string) when is_binary(string) \n\n  Returns a boolean indicating whether there was a match or not.\n\n  ## Examples\n\n      iex> Regex.match?(~r/foo/, \"foo\")\n      true\n\n      iex> Regex.match?(~r/foo/, \"bar\")\n      false\n\n  "
-    },
     message = {
       description = "\nmessage(%{file: file, line: line, description: description})\n"
-    },
-    named_captures = {
-      description = "\nnamed_captures(regex, string, options \\\\ []) when is_binary(string) \n\n  Returns the given captures as a map or `nil` if no captures are\n  found. The option `:return` can be set to `:index` to get indexes\n  back.\n\n  ## Examples\n\n      iex> Regex.named_captures(~r/c(?<foo>d)/, \"abcd\")\n      %{\"foo\" => \"d\"}\n\n      iex> Regex.named_captures(~r/a(?<foo>b)c(?<bar>d)/, \"abcd\")\n      %{\"bar\" => \"d\", \"foo\" => \"b\"}\n\n      iex> Regex.named_captures(~r/a(?<foo>b)c(?<bar>d)/, \"efgh\")\n      nil\n\n  "
-    },
-    names = {
-      description = "\nnames(%Regex{re_pattern: re_pattern})\n\n  Returns a list of names in the regex.\n\n  ## Examples\n\n      iex> Regex.names(~r/(?<foo>bar)/)\n      [\"foo\"]\n\n  "
-    },
-    opts = {
-      description = "\nopts(%Regex{opts: opts})\n\n  Returns the regex options as a string.\n\n  ## Examples\n\n      iex> Regex.opts(~r(foo)m)\n      \"m\"\n\n  "
-    },
-    re_pattern = {
-      description = "\nre_pattern(%Regex{re_pattern: compiled})\n\n  Returns the underlying `re_pattern` in the regular expression.\n  "
-    },
-    ["regex?"] = {
-      description = "\nregex?(_)\n\nregex?(%Regex{})\n\nregex?(term)\n\n  Returns `true` if the given `term` is a regex.\n  Otherwise returns `false`.\n\n  ## Examples\n\n      iex> Regex.regex?(~r/foo/)\n      true\n\n      iex> Regex.regex?(0)\n      false\n\n  "
-    },
-    replace = {
-      description = "\nreplace(regex, string, replacement, options)\n      when is_binary(string) and is_function(replacement) and is_list(options)  \n\nreplace(regex, string, replacement, options)\n      when is_binary(string) and is_binary(replacement) and is_list(options) \n\nreplace(regex, string, replacement, options \\\\ [])\n\n  Receives a regex, a binary and a replacement, returns a new\n  binary where all matches are replaced by the replacement.\n\n  The replacement can be either a string or a function. The string\n  is used as a replacement for every match and it allows specific\n  captures to be accessed via `\\N` or `\\g{N}`, where `N` is the\n  capture. In case `\\0` is used, the whole match is inserted. Note\n  that in regexes the backslash needs to be escaped, hence in practice\n  you'll need to use `\\\\N` and `\\\\g{N}`.\n\n  When the replacement is a function, the function may have arity\n  N where each argument maps to a capture, with the first argument\n  being the whole match. If the function expects more arguments\n  than captures found, the remaining arguments will receive `\"\"`.\n\n  ## Options\n\n    * `:global` - when `false`, replaces only the first occurrence\n      (defaults to `true`)\n\n  ## Examples\n\n      iex> Regex.replace(~r/d/, \"abc\", \"d\")\n      \"abc\"\n\n      iex> Regex.replace(~r/b/, \"abc\", \"d\")\n      \"adc\"\n\n      iex> Regex.replace(~r/b/, \"abc\", \"[\\\\0]\")\n      \"a[b]c\"\n\n      iex> Regex.replace(~r/a(b|d)c/, \"abcadc\", \"[\\\\1]\")\n      \"[b][d]\"\n\n      iex> Regex.replace(~r/\\.(\\d)$/, \"500.5\", \".\\\\g{1}0\")\n      \"500.50\"\n\n      iex> Regex.replace(~r/a(b|d)c/, \"abcadc\", fn _, x -> \"[#{x}]\" end)\n      \"[b][d]\"\n\n      iex> Regex.replace(~r/a/, \"abcadc\", \"A\", global: false)\n      \"Abcadc\"\n\n  "
-    },
-    run = {
-      description = "\nrun(%Regex{re_pattern: compiled}, string, options) when is_binary(string) \n\nrun(regex, string, options \\\\ [])\n\n  Runs the regular expression against the given string until the first match.\n  It returns a list with all captures or `nil` if no match occurred.\n\n  ## Options\n\n    * `:return`  - sets to `:index` to return indexes. Defaults to `:binary`.\n    * `:capture` - what to capture in the result. Check the moduledoc for `Regex`\n      to see the possible capture values.\n\n  ## Examples\n\n      iex> Regex.run(~r/c(d)/, \"abcd\")\n      [\"cd\", \"d\"]\n\n      iex> Regex.run(~r/e/, \"abcd\")\n      nil\n\n      iex> Regex.run(~r/c(d)/, \"abcd\", return: :index)\n      [{2, 2}, {3, 1}]\n\n  "
-    },
-    scan = {
-      description = "\nscan(%Regex{re_pattern: compiled}, string, options) when is_binary(string) \n\nscan(regex, string, options \\\\ [])\n\n  Same as `run/3`, but scans the target several times collecting all\n  matches of the regular expression.\n\n  A list of lists is returned, where each entry in the primary list represents a\n  match and each entry in the secondary list represents the captured contents.\n\n  ## Options\n\n    * `:return`  - sets to `:index` to return indexes. Defaults to `:binary`.\n    * `:capture` - what to capture in the result. Check the moduledoc for `Regex`\n      to see the possible capture values.\n\n  ## Examples\n\n      iex> Regex.scan(~r/c(d|e)/, \"abcd abce\")\n      [[\"cd\", \"d\"], [\"ce\", \"e\"]]\n\n      iex> Regex.scan(~r/c(?:d|e)/, \"abcd abce\")\n      [[\"cd\"], [\"ce\"]]\n\n      iex> Regex.scan(~r/e/, \"abcd\")\n      []\n\n      iex> Regex.scan(~r/\\p{Sc}/u, \"$, £, and €\")\n      [[\"$\"], [\"£\"], [\"€\"]]\n\n  "
-    },
-    source = {
-      description = "\nsource(%Regex{source: source})\n\n  Returns the regex source as a binary.\n\n  ## Examples\n\n      iex> Regex.source(~r(foo))\n      \"foo\"\n\n  "
-    },
-    split = {
-      description = "\nsplit(%Regex{re_pattern: compiled}, string, opts) when is_binary(string) and is_list(opts) \n\nsplit(%Regex{}, \"\", opts)\n\nsplit(regex, string, options \\\\ [])\n\n  Splits the given target based on the given pattern and in the given number of\n  parts.\n\n  ## Options\n\n    * `:parts` - when specified, splits the string into the given number of\n      parts. If not specified, `:parts` defaults to `:infinity`, which will\n      split the string into the maximum number of parts possible based on the\n      given pattern.\n\n    * `:trim` - when `true`, removes empty strings (`\"\"`) from the result.\n\n    * `:on` - specifies which captures to split the string on, and in what\n      order. Defaults to `:first` which means captures inside the regex do not\n      affect the splitting process.\n\n    * `:include_captures` - when `true`, includes in the result the matches of\n      the regular expression. Defaults to `false`.\n\n  ## Examples\n\n      iex> Regex.split(~r{-}, \"a-b-c\")\n      [\"a\", \"b\", \"c\"]\n\n      iex> Regex.split(~r{-}, \"a-b-c\", [parts: 2])\n      [\"a\", \"b-c\"]\n\n      iex> Regex.split(~r{-}, \"abc\")\n      [\"abc\"]\n\n      iex> Regex.split(~r{}, \"abc\")\n      [\"a\", \"b\", \"c\", \"\"]\n\n      iex> Regex.split(~r{a(?<second>b)c}, \"abc\")\n      [\"\", \"\"]\n\n      iex> Regex.split(~r{a(?<second>b)c}, \"abc\", on: [:second])\n      [\"a\", \"c\"]\n\n      iex> Regex.split(~r{(x)}, \"Elixir\", include_captures: true)\n      [\"Eli\", \"x\", \"ir\"]\n\n      iex> Regex.split(~r{a(?<second>b)c}, \"abc\", on: [:second], include_captures: true)\n      [\"a\", \"b\", \"c\"]\n\n  "
-    },
-    unescape_map = {
-      description = "\nunescape_map(_)\n\nunescape_map(?a)\n\nunescape_map(?v)\n\nunescape_map(?t)\n\nunescape_map(?r)\n\nunescape_map(?n)\n\nunescape_map(?f)\nfalse"
     }
   },
   CondClauseError = {
@@ -1027,17 +976,6 @@ return {
       description = "\nnormalize(other, _stacktrace)\n\nnormalize({:badarg, payload}, _stacktrace)\n\nnormalize(:function_clause, stacktrace)\n\nnormalize(:undef, stacktrace)\n\nnormalize({:try_clause, term}, _stacktrace)\n\nnormalize({:with_clause, term}, _stacktrace)\n\nnormalize({:case_clause, term}, _stacktrace)\n\nnormalize({:badkey, key, map}, _stacktrace)\n\nnormalize({:badkey, key}, stacktrace)\n\nnormalize({:badbool, op, term}, _stacktrace)\n\nnormalize({:badmap, term}, _stacktrace)\n\nnormalize({:badmatch, term}, _stacktrace)\n\nnormalize({:badstruct, struct, term}, _stacktrace)\n\nnormalize({:badfun, term}, _stacktrace)\n\nnormalize({:badarity, {fun, args}}, _stacktrace)\n\nnormalize(:cond_clause, _stacktrace)\n\nnormalize(:system_limit, _stacktrace)\n\nnormalize(:badarith, _stacktrace)\n\nnormalize(:badarg, _stacktrace)\nfalse"
     }
   },
-  Error = {
-    __doctests__ = {
-      description = "\n__doctests__(module, opts)\nfalse"
-    },
-    doctest = {
-      description = "\ndoctest(mod, opts \\\\ [])\n\n  This macro is used to generate ExUnit test cases for doctests.\n\n  Calling `doctest(Module)` will generate tests for all doctests found\n  in the module `Module`\n\n  Options can also be given:\n\n    * `:except` - generates tests for all functions except those listed\n      (list of `{function, arity}` tuples, and/or `:moduledoc`).\n\n    * `:only` - generates tests only for functions listed\n      (list of `{function, arity}` tuples, and/or `:moduledoc`).\n\n    * `:import` - when `true`, one can test a function defined in the module\n      without referring to the module name. However, this is not feasible when\n      there is a clash with a module like Kernel. In these cases, `:import`\n      should be set to `false` and a full `M.f` construct should be used.\n\n  ## Examples\n\n      doctest MyModule, except: [:moduledoc, trick_fun: 1]\n\n  This macro is auto-imported with every `ExUnit.Case`.\n  "
-    },
-    exception = {
-      description = "\nexception(opts)\n"
-    }
-  },
   ExUnit = {
     AssertionError = {
       description = "\n  Raised to signal an assertion error.\n  ",
@@ -1205,6 +1143,17 @@ return {
       }
     },
     DocTest = {
+      Error = {
+        doctest = {
+          description = "\ndoctest(mod, opts \\\\ [])\n\n  This macro is used to generate ExUnit test cases for doctests.\n\n  Calling `doctest(Module)` will generate tests for all doctests found\n  in the module `Module`\n\n  Options can also be given:\n\n    * `:except` - generates tests for all functions except those listed\n      (list of `{function, arity}` tuples, and/or `:moduledoc`).\n\n    * `:only` - generates tests only for functions listed\n      (list of `{function, arity}` tuples, and/or `:moduledoc`).\n\n    * `:import` - when `true`, one can test a function defined in the module\n      without referring to the module name. However, this is not feasible when\n      there is a clash with a module like Kernel. In these cases, `:import`\n      should be set to `false` and a full `M.f` construct should be used.\n\n  ## Examples\n\n      doctest MyModule, except: [:moduledoc, trick_fun: 1]\n\n  This macro is auto-imported with every `ExUnit.Case`.\n  "
+        },
+        exception = {
+          description = "\nexception(opts)\n"
+        }
+      },
+      __doctests__ = {
+        description = "\n__doctests__(module, opts)\nfalse"
+      },
       description = "\n  ExUnit.DocTest implements functionality similar to [Python's\n  doctest](https://docs.python.org/2/library/doctest.html).\n\n  It allows us to generate tests from the code\n  examples in a module/function/macro's documentation.\n  To do this, invoke the `doctest/1` macro from within\n  your test case and ensure your code examples are written\n  according to the syntax and guidelines below.\n\n  ## Syntax\n\n  Every new test starts on a new line, with an `iex>` prefix.\n  Multiline expressions can be used by prefixing subsequent lines with either\n  `...>` (recommended) or `iex>`.\n\n  The expected result should start at the next line after the `iex>`\n  or `...>` line(s) and is terminated either by a newline, new\n  `iex>` prefix or the end of the string literal.\n\n  ## Examples\n\n  To run doctests include them in an ExUnit case with a `doctest` macro:\n\n      defmodule MyModule.Test do\n        use ExUnit.Case, async: true\n        doctest MyModule\n      end\n\n  The `doctest` macro loops through all functions and\n  macros defined in `MyModule`, parsing their documentation in\n  search of code examples.\n\n  A very basic example is:\n\n      iex> 1+1\n      2\n\n  Expressions on multiple lines are also supported:\n\n      iex> Enum.map [1, 2, 3], fn(x) ->\n      ...>   x * 2\n      ...> end\n      [2, 4, 6]\n\n  Multiple results can be checked within the same test:\n\n      iex> a = 1\n      1\n      iex> a + 1\n      2\n\n  If you want to keep any two tests separate,\n  add an empty line between them:\n\n      iex> a = 1\n      1\n\n      iex> a + 1  # will fail with a \"undefined function a/0\" error\n      2\n\n  If you don't want to assert for every result in a doctest, you can omit\n  the result:\n\n      iex> pid = spawn fn -> :ok end\n      iex> is_pid(pid)\n      true\n\n  This is useful when the result is something variable (like a PID in the\n  example above) or when the result is a complicated data structure and you\n  don't want to show it all, but just parts of it or some of its properties.\n\n  Similarly to IEx you can use numbers in your \"prompts\":\n\n      iex(1)> [1 + 2,\n      ...(1)>  3]\n      [3, 3]\n\n  This is useful in two cases:\n\n    * being able to refer to specific numbered scenarios\n    * copy-pasting examples from an actual IEx session\n\n  You can also select or skip functions when calling\n  `doctest`. See the documentation on the `:except` and `:only` options below\n  for more info.\n\n  ## Opaque types\n\n  Some types' internal structures are kept hidden and instead show a\n  user-friendly structure when inspected. The idiom in\n  Elixir is to print those data types in the format `#Name<...>`. Because those\n  values are treated as comments in Elixir code due to the leading\n  `#` sign, they require special care when being used in doctests.\n\n  Imagine you have a map that contains a MapSet and is printed as:\n\n      %{users: #MapSet<[:foo, :bar]>}\n\n  If you try to match on such an expression, `doctest` will fail to compile.\n  There are two ways to resolve this.\n\n  The first is to rely on the fact that doctest can compare internal\n  structures as long as they are at the root. So one could write:\n\n      iex> map = %{users: Enum.into([:foo, :bar], MapSet.new)}\n      iex> map.users\n      #MapSet<[:foo, :bar]>\n\n  Whenever a doctest starts with \"#Name<\", `doctest` will perform a string\n  comparison. For example, the above test will perform the following match:\n\n      inspect(map.users) == \"#MapSet<[:foo, :bar]>\"\n\n  Alternatively, since doctest results are actually evaluated, you can have\n  the MapSet building expression as the doctest result:\n\n      iex> %{users: Enum.into([:foo, :bar], MapSet.new)}\n      %{users: Enum.into([:foo, :bar], MapSet.new)}\n\n  The downside of this approach is that the doctest result is not really\n  what users would see in the terminal.\n\n  ## Exceptions\n\n  You can also showcase expressions raising an exception, for example:\n\n      iex(1)> String.to_atom((fn() -> 1 end).())\n      ** (ArgumentError) argument error\n\n  What DocTest will be looking for is a line starting with `** (` and it\n  will parse it accordingly to extract the exception name and message.\n  At this moment, the exception parser would make the parser treat the next\n  line as a start of a completely new expression (if it is prefixed with `iex>`)\n  or a no-op line with documentation. Thus, multiline messages are not\n  supported.\n\n  ## When not to use doctest\n\n  In general, doctests are not recommended when your code examples contain\n  side effects. For example, if a doctest prints to standard output, doctest\n  will not try to capture the output.\n\n  Similarly, doctests do not run in any kind of sandbox. So any module\n  defined in a code example is going to linger throughout the whole test\n  suite run.\n  "
     },
     DuplicateTestError = {},
@@ -1358,9 +1307,41 @@ return {
         description = "\ntake_async_cases(count)\n"
       }
     },
+    Test = {
+      description = "\n    A struct that keeps information about the test.\n\n    It is received by formatters and contains the following fields:\n\n      * `:name`  - the test name\n      * `:case`  - the test case\n      * `:state` - the test error state (see ExUnit.state)\n      * `:time`  - the time to run the test\n      * `:tags`  - the test tags\n      * `:logs`  - the captured logs\n\n    ",
+      t = {
+        description = "t :: %__MODULE__{\n"
+      }
+    },
+    TestCase = {
+      description = "\n    A struct that keeps information about the test case.\n\n    It is received by formatters and contains the following fields:\n\n      * `:name`  - the test case name\n      * `:state` - the test error state (see ExUnit.state)\n      * `:tests` - all tests for this case\n\n    ",
+      t = {
+        description = "t :: %__MODULE__{\n"
+      }
+    },
+    TimeoutError = {
+      message = {
+        description = "\nmessage(%{timeout: timeout, type: type})\n"
+      }
+    },
+    configuration = {
+      description = "\nconfiguration\n\n  Returns ExUnit configuration.\n  "
+    },
+    configure = {
+      description = "\nconfigure(options)\n\n  Configures ExUnit.\n\n  ## Options\n\n  ExUnit supports the following options:\n\n    * `:assert_receive_timeout` - the timeout to be used on `assert_receive`\n      calls. Defaults to 100ms.\n\n    * `:capture_log` - if ExUnit should default to keeping track of log messages\n      and print them on test failure. Can be overridden for individual tests via\n      `@tag capture_log: false`. Defaults to `false`.\n\n    * `:case_load_timeout` - the timeout to be used when loading a test case.\n      Defaults to `60_000` milliseconds.\n\n    * `:colors` - a keyword list of colors to be used by some formatters.\n      The only option so far is `[enabled: boolean]` which defaults to `IO.ANSI.enabled?/0`\n\n    * `:formatters` - the formatters that will print results;\n      defaults to `[ExUnit.CLIFormatter]`\n\n    * `:max_cases` - maximum number of cases to run in parallel;\n      defaults to `:erlang.system_info(:schedulers_online) * 2` to\n      optimize both CPU-bound and IO-bound tests\n\n    * `:trace` - sets ExUnit into trace mode, this sets `:max_cases` to `1` and\n      prints each test case and test while running\n\n    * `:autorun` - if ExUnit should run by default on exit; defaults to `true`\n\n    * `:include` - specifies which tests are run by skipping tests that do not\n      match the filter. Keep in mind that all tests are included by default, so unless they are\n      excluded first, the `:include` option has no effect.\n\n    * `:exclude` - specifies which tests are run by skipping tests that match the\n      filter\n\n    * `:refute_receive_timeout` - the timeout to be used on `refute_receive`\n      calls (defaults to 100ms)\n\n    * `:seed` - an integer seed value to randomize the test suite\n\n    * `:stacktrace_depth` - configures the stacktrace depth to be used\n      on formatting and reporters (defaults to 20)\n\n    * `:timeout` - sets the timeout for the tests (default 60_000ms)\n\n  "
+    },
     description = "\n  Unit testing framework for Elixir.\n\n  ## Example\n\n  A basic setup for ExUnit is shown below:\n\n      # File: assertion_test.exs\n\n      # 1) Start ExUnit.\n      ExUnit.start\n\n      # 2) Create a new test module (test case) and use \"ExUnit.Case\".\n      defmodule AssertionTest do\n        # 3) Notice we pass \"async: true\", this runs the test case\n        #    concurrently with other test cases. The individual tests\n        #    within each test case are still run serially.\n        use ExUnit.Case, async: true\n\n        # 4) Use the \"test\" macro instead of \"def\" for clarity.\n        test \"the truth\" do\n          assert true\n        end\n      end\n\n  To run the tests above, run the file using `elixir` from the\n  command line. Assuming you named the file `assertion_test.exs`,\n  you can run it as:\n\n      elixir assertion_test.exs\n\n  ## Case, Callbacks and Assertions\n\n  See `ExUnit.Case` and `ExUnit.Callbacks` for more information\n  about defining test cases and setting up callbacks.\n\n  The `ExUnit.Assertions` module contains a set of macros to\n  generate assertions with appropriate error messages.\n\n  ## Integration with Mix\n\n  Mix is the project management and build tool for Elixir. Invoking `mix test`\n  from the command line will run the tests in each file matching the pattern\n  `*_test.exs` found in the `test` directory of your project.\n\n  You must create a `test_helper.exs` file inside the\n  `test` directory and put the code common to all tests there.\n\n  The minimum example of a `test_helper.exs` file would be:\n\n      # test/test_helper.exs\n      ExUnit.start\n\n  Mix will load the `test_helper.exs` file before executing the tests.\n  It is not necessary to `require` the `test_helper.exs` file in your test\n  files. See `Mix.Tasks.Test` for more information.\n  ",
     failed = {
       description = "failed :: [{Exception.kind, reason :: term, stacktrace :: [tuple]}]\n"
+    },
+    plural_rule = {
+      description = "\nplural_rule(word, pluralization) when is_binary(word) and is_binary(pluralization) \n  Registers a `pluralization` for `word`.\n\n  If one is already registered, it is replaced.\n  \n\nplural_rule(word) when is_binary(word) \n\n  Returns the pluralization for `word`.\n\n  If one is not registered, returns the word appended with an \"s\".\n  "
+    },
+    run = {
+      description = "\nrun\n\n  API used to run the tests. It is invoked automatically\n  if ExUnit is started via `ExUnit.start/1`.\n\n  Returns a map containing the total number of tests, the number\n  of failures and the number of skipped tests.\n  "
+    },
+    start = {
+      description = "\nstart(options \\\\ [])\n  Starts ExUnit and automatically runs tests right before the\n  VM terminates. It accepts a set of options to configure `ExUnit`\n  (the same ones accepted by `configure/1`).\n\n  If you want to run tests manually, you can set `:autorun` to `false`.\n  \n\nstart(_type, [])\nfalse"
     },
     state = {
       description = "state :: nil | {:failed, failed} | {:skip, binary} | {:invalid, module}\n"
@@ -1798,11 +1779,6 @@ return {
       description = "\nwhereis({name, node} = server) when is_atom(name) and is_atom(node) \n\nwhereis({name, local}) when is_atom(name) and local == node() \n\nwhereis({:via, mod, name})\n\nwhereis({:global, name})\n\nwhereis(name) when is_atom(name) \n\nwhereis(pid) when is_pid(pid), \n\n  Returns the `pid` or `{name, node}` of a GenServer process, or `nil` if\n  no process is associated with the given name.\n\n  ## Examples\n\n  For example, to lookup a server process, monitor it and send a cast to it:\n\n      process = GenServer.whereis(server)\n      monitor = Process.monitor(process)\n      GenServer.cast(process, :hello)\n\n  "
     }
   },
-  H = {
-    on_def = {
-      description = "\non_def(_env, kind, name, args, guards, body)\n"
-    }
-  },
   HashDict = {
     count = {
       description = "\ncount(dict)\n"
@@ -2139,27 +2115,6 @@ return {
     },
     undigits = {
       description = "\nundigits(digits, base \\\\ 10) when is_list(digits) and is_integer(base) and base >= 2 \n\n  Returns the integer represented by the ordered `digits`.\n\n  An optional `base` value may be provided representing the radix for the `digits`.\n  This one can be an integer >= 2.\n\n  ## Examples\n\n      iex> Integer.undigits([1, 2, 3])\n      123\n\n      iex> Integer.undigits([1, 4], 16)\n      20\n\n      iex> Integer.undigits([])\n      0\n\n  "
-    }
-  },
-  InvalidRequirementError = {},
-  InvalidVersionError = {
-    compare = {
-      description = "\ncompare(version1, version2)\n\n  Compares two versions. Returns `:gt` if the first version is greater than\n  the second one, and `:lt` for vice versa. If the two versions are equal `:eq`\n  is returned.\n\n  Pre-releases are strictly less than their corresponding release versions.\n\n  Patch segments are compared lexicographically if they are alphanumeric, and\n  numerically otherwise.\n\n  Build segments are ignored, if two versions differ only in their build segment\n  they are considered to be equal.\n\n  Raises a `Version.InvalidVersionError` exception if any of the two are not\n  parsable. If given an already parsed version this function won't raise.\n\n  ## Examples\n\n      iex> Version.compare(\"2.0.1-alpha1\", \"2.0.0\")\n      :gt\n\n      iex> Version.compare(\"1.0.0-beta\", \"1.0.0-rc1\")\n      :lt\n\n      iex> Version.compare(\"1.0.0-10\", \"1.0.0-2\")\n      :gt\n\n      iex> Version.compare(\"2.0.1+build0\", \"2.0.1\")\n      :eq\n\n      iex> Version.compare(\"invalid\", \"2.0.1\")\n      ** (Version.InvalidVersionError) invalid\n\n  "
-    },
-    compile_requirement = {
-      description = "\ncompile_requirement(%Requirement{matchspec: spec} = req)\n\n  Compiles a requirement to its internal representation with\n  `:ets.match_spec_compile/1` for faster matching.\n\n  The internal representation is opaque and can not be converted to external\n  term format and then back again without losing its properties (meaning it\n  can not be sent to a process on another node and still remain a valid\n  compiled match_spec, nor can it be stored on disk).\n  "
-    },
-    ["match?"] = {
-      description = "\nmatch?(version, %Requirement{matchspec: spec, compiled: true}, opts)\n\nmatch?(version, %Requirement{matchspec: spec, compiled: false}, opts)\n\nmatch?(version, requirement, opts) when is_binary(requirement) \n\nmatch?(version, requirement, opts \\\\ [])\n\n  Checks if the given version matches the specification.\n\n  Returns `true` if `version` satisfies `requirement`, `false` otherwise.\n  Raises a `Version.InvalidRequirementError` exception if `requirement` is not\n  parsable, or `Version.InvalidVersionError` if `version` is not parsable.\n  If given an already parsed version and requirement this function won't\n  raise.\n\n  ## Options\n\n    * `:allow_pre` - when `false` pre-release versions will not match\n      unless the operand is a pre-release version, see the table above\n      for examples  (default: `true`);\n\n  ## Examples\n\n      iex> Version.match?(\"2.0.0\", \">1.0.0\")\n      true\n\n      iex> Version.match?(\"2.0.0\", \"==1.0.0\")\n      false\n\n      iex> Version.match?(\"foo\", \"==1.0.0\")\n      ** (Version.InvalidVersionError) foo\n\n      iex> Version.match?(\"2.0.0\", \"== ==1.0.0\")\n      ** (Version.InvalidRequirementError) == ==1.0.0\n\n  "
-    },
-    parse = {
-      description = "\nparse(string) when is_binary(string) \n\n  Parses a version string into a `Version`.\n\n  ## Examples\n\n      iex> {:ok, version} = Version.parse(\"2.0.1-alpha1\")\n      iex> version\n      #Version<2.0.1-alpha1>\n\n      iex> Version.parse(\"2.0-alpha1\")\n      :error\n\n  "
-    },
-    ["parse!"] = {
-      description = "\nparse!(string) when is_binary(string) \n\n  Parses a version string into a `Version`.\n\n  If `string` is an invalid version, an `InvalidVersionError` is raised.\n\n  ## Examples\n\n      iex> Version.parse!(\"2.0.1-alpha1\")\n      #Version<2.0.1-alpha1>\n\n      iex> Version.parse!(\"2.0-alpha1\")\n      ** (Version.InvalidVersionError) 2.0-alpha1\n\n  "
-    },
-    parse_requirement = {
-      description = "\nparse_requirement(string) when is_binary(string) \n\n  Parses a version requirement string into a `Version.Requirement`.\n\n  ## Examples\n\n      iex> {:ok, req} = Version.parse_requirement(\"== 2.0.1\")\n      iex> req\n      #Version.Requirement<== 2.0.1>\n\n      iex> Version.parse_requirement(\"== == 2.0.1\")\n      :error\n\n  "
     }
   },
   Kernel = {
@@ -2776,11 +2731,8 @@ return {
   List = {
     Chars = {
       description = "\n  The List.Chars protocol is responsible for\n  converting a structure to a list (only if applicable).\n  The only function required to be implemented is\n  `to_charlist` which does the conversion.\n\n  The `to_charlist/1` function automatically imported\n  by `Kernel` invokes this protocol.\n  ",
-      to_char_list = {
-        description = "\nto_char_list(term)\nfalse"
-      },
       to_charlist = {
-        description = "\nto_charlist(term)\n\nto_charlist(term)\n\nto_charlist(list)\n\nto_charlist(term)\n\nto_charlist(term) when is_binary(term) \n  Returns the given binary `term` converted to a charlist.\n  \n\nto_charlist(atom)\n\nto_charlist(term)\n"
+        description = "\nto_charlist(term)\n"
       }
     },
     delete = {
@@ -3102,81 +3054,6 @@ return {
       description = "\nwarn(chardata_or_fun, metadata \\\\ [])\n\n  Logs a warning.\n\n  Returns the atom `:ok` or an `{:error, reason}` tuple.\n\n  ## Examples\n\n      Logger.warn \"knob turned too far to the right\"\n      Logger.warn fn -> \"expensive to calculate warning\" end\n      Logger.warn fn -> {\"expensive to calculate warning\", [additional: :metadata]} end\n\n  "
     }
   },
-  M = {
-    __after_compile__ = {
-      description = "\n__after_compile__(env, _bytecode)\n"
-    },
-    __info__ = {
-      description = "\n__info__(kind)\n\n  Provides runtime information about functions and macros defined by the\n  module, enables docstring extraction, etc.\n\n  Each module gets an `__info__/1` function when it's compiled. The function\n  takes one of the following atoms:\n\n    * `:functions`  - keyword list of public functions along with their arities\n\n    * `:macros`     - keyword list of public macros along with their arities\n\n    * `:module`     - module name (`Module == Module.__info__(:module)`)\n\n  In addition to the above, you may also pass to `__info__/1` any atom supported\n  by `:erlang.module_info/0` which also gets defined for each compiled module.\n\n  For a list of supported attributes and more information, see [Modules – Erlang Reference Manual](http://www.erlang.org/doc/reference_manual/modules.html#id77056).\n  "
-    },
-    add_doc = {
-      description = "\nadd_doc(module, line, kind, tuple, signature, doc) when\n      kind in [:def, :defmacro, :type, :opaque] and (is_binary(\n\nadd_doc(_module, _line, kind, _tuple, _signature, doc) when kind in [:defp, :defmacrop, :typep] \n\nadd_doc(module, line, kind, tuple, signature \\\\ [], doc)\n\n  Attaches documentation to a given function or type.\n\n  It expects the module the function/type belongs to, the line (a non\n  negative integer), the kind (`def` or `defmacro`), a tuple representing\n  the function and its arity, the function signature (the signature\n  should be omitted for types) and the documentation, which should\n  be either a binary or a boolean.\n\n  ## Examples\n\n      defmodule MyModule do\n        Module.add_doc(__MODULE__, __ENV__.line + 1, :def, {:version, 0}, [], \"Manually added docs\")\n        def version, do: 1\n      end\n\n  "
-    },
-    compile_doc = {
-      description = "\ncompile_doc(env, kind, name, args, _guards, _body)\nfalse"
-    },
-    concat = {
-      description = "\nconcat(left, right)\n  Concatenates two aliases and returns a new alias.\n\n  ## Examples\n\n      iex> Module.concat(Foo, Bar)\n      Foo.Bar\n\n      iex> Module.concat(Foo, \"Bar\")\n      Foo.Bar\n\n  \n\nconcat(list) when is_list(list) \n\n  Concatenates a list of aliases and returns a new alias.\n\n  ## Examples\n\n      iex> Module.concat([Foo, Bar])\n      Foo.Bar\n\n      iex> Module.concat([Foo, \"Bar\"])\n      Foo.Bar\n\n  "
-    },
-    create = {
-      description = "\ncreate(module, quoted, opts) when is_atom(module) and is_list(opts) \n\ncreate(module, quoted, %Macro.Env{} = env)\n\ncreate(module, quoted, opts)\n\n  Creates a module with the given name and defined by\n  the given quoted expressions.\n\n  The line where the module is defined and its file **must**\n  be passed as options.\n\n  ## Examples\n\n      contents =\n        quote do\n          def world, do: true\n        end\n\n      Module.create(Hello, contents, Macro.Env.location(__ENV__))\n\n      Hello.world #=> true\n\n  ## Differences from `defmodule`\n\n  `Module.create/3` works similarly to `defmodule` and\n  return the same results. While one could also use\n  `defmodule` to define modules dynamically, this\n  function is preferred when the module body is given\n  by a quoted expression.\n\n  Another important distinction is that `Module.create/3`\n  allows you to control the environment variables used\n  when defining the module, while `defmodule` automatically\n  shares the same environment.\n  "
-    },
-    ["defines?"] = {
-      description = "\ndefines?(module, tuple, kind)\n  Checks if the module defines a function or macro of the\n  given `kind`.\n\n  `kind` can be any of `:def`, `:defp`, `:defmacro` or `:defmacrop`.\n\n  This function can only be used on modules that have not yet been compiled.\n  Use `Kernel.function_exported?/3` to check compiled modules.\n\n  ## Examples\n\n      defmodule Example do\n        Module.defines? __MODULE__, {:version, 0}, :defp #=> false\n        def version, do: 1\n        Module.defines? __MODULE__, {:version, 0}, :defp #=> false\n      end\n\n  \n\ndefines?(module, tuple) when is_tuple(tuple) \n\n  Checks if the module defines the given function or macro.\n\n  Use `defines?/3` to assert for a specific type.\n\n  This function can only be used on modules that have not yet been compiled.\n  Use `Kernel.function_exported?/3` to check compiled modules.\n\n  ## Examples\n\n      defmodule Example do\n        Module.defines? __MODULE__, {:version, 0} #=> false\n        def version, do: 1\n        Module.defines? __MODULE__, {:version, 0} #=> true\n      end\n\n  "
-    },
-    definitions_in = {
-      description = "\ndefinitions_in(module, kind)\n  Returns all functions defined in `module`, according\n  to its kind.\n\n  ## Examples\n\n      defmodule Example do\n        def version, do: 1\n        Module.definitions_in __MODULE__, :def  #=> [{:version, 0}]\n        Module.definitions_in __MODULE__, :defp #=> []\n      end\n\n  \n\ndefinitions_in(module)\n\n  Returns all functions defined in `module`.\n\n  ## Examples\n\n      defmodule Example do\n        def version, do: 1\n        Module.definitions_in __MODULE__ #=> [{:version, 0}]\n      end\n\n  "
-    },
-    delete_attribute = {
-      description = "\ndelete_attribute(module, key) when is_atom(key) \n\n  Deletes the module attribute that matches the given key.\n\n  It returns the deleted attribute value (or `nil` if nothing was set).\n\n  ## Examples\n\n      defmodule MyModule do\n        Module.put_attribute __MODULE__, :custom_threshold_for_lib, 10\n        Module.delete_attribute __MODULE__, :custom_threshold_for_lib\n      end\n\n  "
-    },
-    description = "\n        A very useful module\n        ",
-    eval_quoted = {
-      description = "\neval_quoted(module, quoted, binding, opts)\n\neval_quoted(module, quoted, binding, %Macro.Env{} = env)\n\neval_quoted(%Macro.Env{} = env, quoted, binding, opts)\n\neval_quoted(module_or_env, quoted, binding \\\\ [], opts \\\\ [])\n\n  Evaluates the quoted contents in the given module's context.\n\n  A list of environment options can also be given as argument.\n  See `Code.eval_string/3` for more information.\n\n  Raises an error if the module was already compiled.\n\n  ## Examples\n\n      defmodule Foo do\n        contents = quote do: (def sum(a, b), do: a + b)\n        Module.eval_quoted __MODULE__, contents\n      end\n\n      Foo.sum(1, 2) #=> 3\n\n  For convenience, you can pass any `Macro.Env` struct, such\n  as  `__ENV__/0`, as the first argument or as options. Both\n  the module and all options will be automatically extracted\n  from the environment:\n\n      defmodule Foo do\n        contents = quote do: (def sum(a, b), do: a + b)\n        Module.eval_quoted __ENV__, contents\n      end\n\n      Foo.sum(1, 2) #=> 3\n\n  Note that if you pass a `Macro.Env` struct as first argument\n  while also passing `opts`, they will be merged with `opts`\n  having precedence.\n  "
-    },
-    get_attribute = {
-      description = "\nget_attribute(module, key, stack) when is_atom(key) false\n\nget_attribute(module, key)\n\n  Gets the given attribute from a module.\n\n  If the attribute was marked with `accumulate` with\n  `Module.register_attribute/3`, a list is always returned.\n  `nil` is returned if the attribute has not been marked with\n  `accumulate` and has not been set to any value.\n\n  The `@` macro compiles to a call to this function. For example,\n  the following code:\n\n      @foo\n\n  Expands to something akin to:\n\n      Module.get_attribute(__MODULE__, :foo)\n\n  ## Examples\n\n      defmodule Foo do\n        Module.put_attribute __MODULE__, :value, 1\n        Module.get_attribute __MODULE__, :value #=> 1\n\n        Module.register_attribute __MODULE__, :value, accumulate: true\n        Module.put_attribute __MODULE__, :value, 1\n        Module.get_attribute __MODULE__, :value #=> [1]\n      end\n\n  "
-    },
-    hello = {
-      description = "\nhello(_)\n\nhello(arg) when is_binary(arg) or is_list(arg) \n\nhello\n\nhello\nfalse"
-    },
-    load_check = {
-      description = "\nload_check\n"
-    },
-    make_overridable = {
-      description = "\nmake_overridable(module, tuples)\n\n  Makes the given functions in `module` overridable.\n\n  An overridable function is lazily defined, allowing a\n  developer to customize it. See `Kernel.defoverridable/1` for\n  more information and documentation.\n  "
-    },
-    my_fun = {
-      description = "\nmy_fun(arg)\n\nmy_fun(arg)\n"
-    },
-    ["open?"] = {
-      description = "\nopen?(module)\n\n  Checks if a module is open, i.e. it is currently being defined\n  and its attributes and functions can be modified.\n  "
-    },
-    ["overridable?"] = {
-      description = "\noverridable?(module, tuple)\n\n  Returns `true` if `tuple` in `module` is marked as overridable.\n  "
-    },
-    put_attribute = {
-      description = "\nput_attribute(module, key, value, stack, unread_line) when is_atom(key) false\n\nput_attribute(module, key, value)\n\n  Puts a module attribute with key and value in the given module.\n\n  ## Examples\n\n      defmodule MyModule do\n        Module.put_attribute __MODULE__, :custom_threshold_for_lib, 10\n      end\n\n  "
-    },
-    register_attribute = {
-      description = "\nregister_attribute(module, new, opts) when is_atom(new) \n\n  Registers an attribute.\n\n  By registering an attribute, a developer is able to customize\n  how Elixir will store and accumulate the attribute values.\n\n  ## Options\n\n  When registering an attribute, two options can be given:\n\n    * `:accumulate` - several calls to the same attribute will\n      accumulate instead of override the previous one. New attributes\n      are always added to the top of the accumulated list.\n\n    * `:persist` - the attribute will be persisted in the Erlang\n      Abstract Format. Useful when interfacing with Erlang libraries.\n\n  By default, both options are `false`.\n\n  ## Examples\n\n      defmodule MyModule do\n        Module.register_attribute __MODULE__,\n          :custom_threshold_for_lib,\n          accumulate: true, persist: false\n\n        @custom_threshold_for_lib 10\n        @custom_threshold_for_lib 20\n        @custom_threshold_for_lib #=> [20, 10]\n      end\n\n  "
-    },
-    safe_concat = {
-      description = "\nsafe_concat(left, right)\n  Concatenates two aliases and returns a new alias only if the alias was\n  already referenced.\n\n  If the alias was not referenced yet, fails with `ArgumentError`.\n  It handles charlists, binaries and atoms.\n\n  ## Examples\n\n      iex> Module.safe_concat(Module, Unknown)\n      ** (ArgumentError) argument error\n\n      iex> Module.safe_concat(List, Chars)\n      List.Chars\n\n  \n\nsafe_concat(list) when is_list(list) \n\n  Concatenates a list of aliases and returns a new alias only if the alias\n  was already referenced.\n\n  If the alias was not referenced yet, fails with `ArgumentError`.\n  It handles charlists, binaries and atoms.\n\n  ## Examples\n\n      iex> Module.safe_concat([Module, Unknown])\n      ** (ArgumentError) argument error\n\n      iex> Module.safe_concat([List, Chars])\n      List.Chars\n\n  "
-    },
-    some_condition = {
-      description = "\nsome_condition\n"
-    },
-    split = {
-      description = "\nsplit(\"Elixir.\" <> name)\n\nsplit(module) when is_atom(module) \n\n  Splits the given module name into binary parts.\n\n  ## Examples\n\n      iex> Module.split Very.Long.Module.Name.And.Even.Longer\n      [\"Very\", \"Long\", \"Module\", \"Name\", \"And\", \"Even\", \"Longer\"]\n\n  "
-    },
-    store_typespec = {
-      description = "\nstore_typespec(module, key, value) when is_atom(key) \nfalse"
-    },
-    sum = {
-      description = "\nsum(a, b)\n\n        Sums `a` to `b`.\n        "
-    }
-  },
   Macro = {
     Env = {
       __struct__ = {
@@ -3465,6 +3342,17 @@ return {
     }
   },
   Module = {
+    A = {
+      __before_compile__ = {
+        description = "\n__before_compile__(_env)\n"
+      }
+    },
+    B = {},
+    H = {
+      on_def = {
+        description = "\non_def(_env, kind, name, args, guards, body)\n"
+      }
+    },
     LocalsTracker = {
       add_defaults = {
         description = "\nadd_defaults(pid, kind, tuple, defaults) when kind in [:def, :defp, :defmacro, :defmacrop] \nfalse"
@@ -3542,6 +3430,89 @@ return {
       yank = {
         description = "\nyank(pid, local)\nfalse"
       }
+    },
+    M = {
+      __after_compile__ = {
+        description = "\n__after_compile__(env, _bytecode)\n"
+      },
+      description = "\n        A very useful module\n        ",
+      hello = {
+        description = "\nhello(_)\n\nhello(arg) when is_binary(arg) or is_list(arg) \n\nhello\n\nhello\nfalse"
+      },
+      load_check = {
+        description = "\nload_check\n"
+      },
+      my_fun = {
+        description = "\nmy_fun(arg)\n\nmy_fun(arg)\n"
+      },
+      some_condition = {
+        description = "\nsome_condition\n"
+      },
+      sum = {
+        description = "\nsum(a, b)\n\n        Sums `a` to `b`.\n        "
+      }
+    },
+    URI = {
+      HTTP = {
+        parse = {
+          description = "\nparse(info)\n"
+        }
+      },
+      Parser = {}
+    },
+    __info__ = {
+      description = "\n__info__(kind)\n\n  Provides runtime information about functions and macros defined by the\n  module, enables docstring extraction, etc.\n\n  Each module gets an `__info__/1` function when it's compiled. The function\n  takes one of the following atoms:\n\n    * `:functions`  - keyword list of public functions along with their arities\n\n    * `:macros`     - keyword list of public macros along with their arities\n\n    * `:module`     - module name (`Module == Module.__info__(:module)`)\n\n  In addition to the above, you may also pass to `__info__/1` any atom supported\n  by `:erlang.module_info/0` which also gets defined for each compiled module.\n\n  For a list of supported attributes and more information, see [Modules – Erlang Reference Manual](http://www.erlang.org/doc/reference_manual/modules.html#id77056).\n  "
+    },
+    add_doc = {
+      description = "\nadd_doc(module, line, kind, tuple, signature, doc) when\n      kind in [:def, :defmacro, :type, :opaque] and (is_binary(\n\nadd_doc(_module, _line, kind, _tuple, _signature, doc) when kind in [:defp, :defmacrop, :typep] \n\nadd_doc(module, line, kind, tuple, signature \\\\ [], doc)\n\n  Attaches documentation to a given function or type.\n\n  It expects the module the function/type belongs to, the line (a non\n  negative integer), the kind (`def` or `defmacro`), a tuple representing\n  the function and its arity, the function signature (the signature\n  should be omitted for types) and the documentation, which should\n  be either a binary or a boolean.\n\n  ## Examples\n\n      defmodule MyModule do\n        Module.add_doc(__MODULE__, __ENV__.line + 1, :def, {:version, 0}, [], \"Manually added docs\")\n        def version, do: 1\n      end\n\n  "
+    },
+    compile_doc = {
+      description = "\ncompile_doc(env, kind, name, args, _guards, _body)\nfalse"
+    },
+    concat = {
+      description = "\nconcat(left, right)\n  Concatenates two aliases and returns a new alias.\n\n  ## Examples\n\n      iex> Module.concat(Foo, Bar)\n      Foo.Bar\n\n      iex> Module.concat(Foo, \"Bar\")\n      Foo.Bar\n\n  \n\nconcat(list) when is_list(list) \n\n  Concatenates a list of aliases and returns a new alias.\n\n  ## Examples\n\n      iex> Module.concat([Foo, Bar])\n      Foo.Bar\n\n      iex> Module.concat([Foo, \"Bar\"])\n      Foo.Bar\n\n  "
+    },
+    create = {
+      description = "\ncreate(module, quoted, opts) when is_atom(module) and is_list(opts) \n\ncreate(module, quoted, %Macro.Env{} = env)\n\ncreate(module, quoted, opts)\n\n  Creates a module with the given name and defined by\n  the given quoted expressions.\n\n  The line where the module is defined and its file **must**\n  be passed as options.\n\n  ## Examples\n\n      contents =\n        quote do\n          def world, do: true\n        end\n\n      Module.create(Hello, contents, Macro.Env.location(__ENV__))\n\n      Hello.world #=> true\n\n  ## Differences from `defmodule`\n\n  `Module.create/3` works similarly to `defmodule` and\n  return the same results. While one could also use\n  `defmodule` to define modules dynamically, this\n  function is preferred when the module body is given\n  by a quoted expression.\n\n  Another important distinction is that `Module.create/3`\n  allows you to control the environment variables used\n  when defining the module, while `defmodule` automatically\n  shares the same environment.\n  "
+    },
+    ["defines?"] = {
+      description = "\ndefines?(module, tuple, kind)\n  Checks if the module defines a function or macro of the\n  given `kind`.\n\n  `kind` can be any of `:def`, `:defp`, `:defmacro` or `:defmacrop`.\n\n  This function can only be used on modules that have not yet been compiled.\n  Use `Kernel.function_exported?/3` to check compiled modules.\n\n  ## Examples\n\n      defmodule Example do\n        Module.defines? __MODULE__, {:version, 0}, :defp #=> false\n        def version, do: 1\n        Module.defines? __MODULE__, {:version, 0}, :defp #=> false\n      end\n\n  \n\ndefines?(module, tuple) when is_tuple(tuple) \n\n  Checks if the module defines the given function or macro.\n\n  Use `defines?/3` to assert for a specific type.\n\n  This function can only be used on modules that have not yet been compiled.\n  Use `Kernel.function_exported?/3` to check compiled modules.\n\n  ## Examples\n\n      defmodule Example do\n        Module.defines? __MODULE__, {:version, 0} #=> false\n        def version, do: 1\n        Module.defines? __MODULE__, {:version, 0} #=> true\n      end\n\n  "
+    },
+    definitions_in = {
+      description = "\ndefinitions_in(module, kind)\n  Returns all functions defined in `module`, according\n  to its kind.\n\n  ## Examples\n\n      defmodule Example do\n        def version, do: 1\n        Module.definitions_in __MODULE__, :def  #=> [{:version, 0}]\n        Module.definitions_in __MODULE__, :defp #=> []\n      end\n\n  \n\ndefinitions_in(module)\n\n  Returns all functions defined in `module`.\n\n  ## Examples\n\n      defmodule Example do\n        def version, do: 1\n        Module.definitions_in __MODULE__ #=> [{:version, 0}]\n      end\n\n  "
+    },
+    delete_attribute = {
+      description = "\ndelete_attribute(module, key) when is_atom(key) \n\n  Deletes the module attribute that matches the given key.\n\n  It returns the deleted attribute value (or `nil` if nothing was set).\n\n  ## Examples\n\n      defmodule MyModule do\n        Module.put_attribute __MODULE__, :custom_threshold_for_lib, 10\n        Module.delete_attribute __MODULE__, :custom_threshold_for_lib\n      end\n\n  "
+    },
+    eval_quoted = {
+      description = "\neval_quoted(module, quoted, binding, opts)\n\neval_quoted(module, quoted, binding, %Macro.Env{} = env)\n\neval_quoted(%Macro.Env{} = env, quoted, binding, opts)\n\neval_quoted(module_or_env, quoted, binding \\\\ [], opts \\\\ [])\n\n  Evaluates the quoted contents in the given module's context.\n\n  A list of environment options can also be given as argument.\n  See `Code.eval_string/3` for more information.\n\n  Raises an error if the module was already compiled.\n\n  ## Examples\n\n      defmodule Foo do\n        contents = quote do: (def sum(a, b), do: a + b)\n        Module.eval_quoted __MODULE__, contents\n      end\n\n      Foo.sum(1, 2) #=> 3\n\n  For convenience, you can pass any `Macro.Env` struct, such\n  as  `__ENV__/0`, as the first argument or as options. Both\n  the module and all options will be automatically extracted\n  from the environment:\n\n      defmodule Foo do\n        contents = quote do: (def sum(a, b), do: a + b)\n        Module.eval_quoted __ENV__, contents\n      end\n\n      Foo.sum(1, 2) #=> 3\n\n  Note that if you pass a `Macro.Env` struct as first argument\n  while also passing `opts`, they will be merged with `opts`\n  having precedence.\n  "
+    },
+    get_attribute = {
+      description = "\nget_attribute(module, key, stack) when is_atom(key) false\n\nget_attribute(module, key)\n\n  Gets the given attribute from a module.\n\n  If the attribute was marked with `accumulate` with\n  `Module.register_attribute/3`, a list is always returned.\n  `nil` is returned if the attribute has not been marked with\n  `accumulate` and has not been set to any value.\n\n  The `@` macro compiles to a call to this function. For example,\n  the following code:\n\n      @foo\n\n  Expands to something akin to:\n\n      Module.get_attribute(__MODULE__, :foo)\n\n  ## Examples\n\n      defmodule Foo do\n        Module.put_attribute __MODULE__, :value, 1\n        Module.get_attribute __MODULE__, :value #=> 1\n\n        Module.register_attribute __MODULE__, :value, accumulate: true\n        Module.put_attribute __MODULE__, :value, 1\n        Module.get_attribute __MODULE__, :value #=> [1]\n      end\n\n  "
+    },
+    make_overridable = {
+      description = "\nmake_overridable(module, tuples)\n\n  Makes the given functions in `module` overridable.\n\n  An overridable function is lazily defined, allowing a\n  developer to customize it. See `Kernel.defoverridable/1` for\n  more information and documentation.\n  "
+    },
+    ["open?"] = {
+      description = "\nopen?(module)\n\n  Checks if a module is open, i.e. it is currently being defined\n  and its attributes and functions can be modified.\n  "
+    },
+    ["overridable?"] = {
+      description = "\noverridable?(module, tuple)\n\n  Returns `true` if `tuple` in `module` is marked as overridable.\n  "
+    },
+    put_attribute = {
+      description = "\nput_attribute(module, key, value, stack, unread_line) when is_atom(key) false\n\nput_attribute(module, key, value)\n\n  Puts a module attribute with key and value in the given module.\n\n  ## Examples\n\n      defmodule MyModule do\n        Module.put_attribute __MODULE__, :custom_threshold_for_lib, 10\n      end\n\n  "
+    },
+    register_attribute = {
+      description = "\nregister_attribute(module, new, opts) when is_atom(new) \n\n  Registers an attribute.\n\n  By registering an attribute, a developer is able to customize\n  how Elixir will store and accumulate the attribute values.\n\n  ## Options\n\n  When registering an attribute, two options can be given:\n\n    * `:accumulate` - several calls to the same attribute will\n      accumulate instead of override the previous one. New attributes\n      are always added to the top of the accumulated list.\n\n    * `:persist` - the attribute will be persisted in the Erlang\n      Abstract Format. Useful when interfacing with Erlang libraries.\n\n  By default, both options are `false`.\n\n  ## Examples\n\n      defmodule MyModule do\n        Module.register_attribute __MODULE__,\n          :custom_threshold_for_lib,\n          accumulate: true, persist: false\n\n        @custom_threshold_for_lib 10\n        @custom_threshold_for_lib 20\n        @custom_threshold_for_lib #=> [20, 10]\n      end\n\n  "
+    },
+    safe_concat = {
+      description = "\nsafe_concat(left, right)\n  Concatenates two aliases and returns a new alias only if the alias was\n  already referenced.\n\n  If the alias was not referenced yet, fails with `ArgumentError`.\n  It handles charlists, binaries and atoms.\n\n  ## Examples\n\n      iex> Module.safe_concat(Module, Unknown)\n      ** (ArgumentError) argument error\n\n      iex> Module.safe_concat(List, Chars)\n      List.Chars\n\n  \n\nsafe_concat(list) when is_list(list) \n\n  Concatenates a list of aliases and returns a new alias only if the alias\n  was already referenced.\n\n  If the alias was not referenced yet, fails with `ArgumentError`.\n  It handles charlists, binaries and atoms.\n\n  ## Examples\n\n      iex> Module.safe_concat([Module, Unknown])\n      ** (ArgumentError) argument error\n\n      iex> Module.safe_concat([List, Chars])\n      List.Chars\n\n  "
+    },
+    split = {
+      description = "\nsplit(\"Elixir.\" <> name)\n\nsplit(module) when is_atom(module) \n\n  Splits the given module name into binary parts.\n\n  ## Examples\n\n      iex> Module.split Very.Long.Module.Name.And.Even.Longer\n      [\"Very\", \"Long\", \"Module\", \"Name\", \"And\", \"Even\", \"Longer\"]\n\n  "
+    },
+    store_typespec = {
+      description = "\nstore_typespec(module, key, value) when is_atom(key) \nfalse"
     }
   },
   NaiveDateTime = {
@@ -3632,6 +3603,7 @@ return {
     }
   },
   OptionParser = {
+    ParseError = {},
     argv = {
       description = "argv :: [String.t]\n"
     },
@@ -3639,19 +3611,14 @@ return {
     errors = {
       description = "errors :: [{String.t, String.t | nil}]\n"
     },
-    options = {
-      description = "options :: [switches: Keyword.t, strict: Keyword.t, aliases: Keyword.t]\n"
-    },
-    parsed = {
-      description = "parsed :: Keyword.t\n"
-    }
-  },
-  ParseError = {
     get_option_key = {
       description = "\nget_option_key(option, allow_nonexistent_atoms?)\n"
     },
     next = {
       description = "\nnext(argv, opts \\\\ []) when is_list(argv) and is_list(opts) \n\n  Low-level function that parses one option.\n\n  It accepts the same options as `parse/2` and `parse_head/2`\n  as both functions are built on top of this function. This function\n  may return:\n\n    * `{:ok, key, value, rest}` - the option `key` with `value` was\n      successfully parsed\n\n    * `{:invalid, key, value, rest}` - the option `key` is invalid with `value`\n      (returned when the value cannot be parsed according to the switch type)\n\n    * `{:undefined, key, value, rest}` - the option `key` is undefined\n      (returned in strict mode when the switch is unknown)\n\n    * `{:error, rest}` - there are no switches at the head of the given `argv`\n\n  "
+    },
+    options = {
+      description = "options :: [switches: Keyword.t, strict: Keyword.t, aliases: Keyword.t]\n"
     },
     parse = {
       description = "\nparse(argv, opts \\\\ []) when is_list(argv) and is_list(opts) \n\n  Parses `argv` into a keyword list.\n\n  It returns a three-element tuple with the form `{parsed, args, invalid}`, where:\n\n    * `parsed` is a keyword list of parsed switches with `{switch_name, value}`\n      tuples in it; `switch_name` is the atom representing the switch name while\n      `value` is the value for that switch parsed according to `opts` (see the\n      \"Examples\" section for more information)\n    * `args` is a list of the remaining arguments in `argv` as strings\n    * `invalid` is a list of invalid options as `{option_name, value}` where\n      `option_name` is the raw option and `value` is `nil` if the option wasn't\n      expected or the string value if the value didn't have the expected type for\n      the corresponding option\n\n  Elixir converts switches to underscored atoms, so `--source-path` becomes\n  `:source_path`. This is done to better suit Elixir conventions. However, this\n  means that switches can't contain underscores and switches that do contain\n  underscores are always returned in the list of invalid switches.\n\n  When parsing, it is common to list switches and their expected types:\n\n      iex> OptionParser.parse([\"--debug\"], switches: [debug: :boolean])\n      {[debug: true], [], []}\n\n      iex> OptionParser.parse([\"--source\", \"lib\"], switches: [source: :string])\n      {[source: \"lib\"], [], []}\n\n      iex> OptionParser.parse([\"--source-path\", \"lib\", \"test/enum_test.exs\", \"--verbose\"],\n      ...>                    switches: [source_path: :string, verbose: :boolean])\n      {[source_path: \"lib\", verbose: true], [\"test/enum_test.exs\"], []}\n\n  We will explore the valid switches and operation modes of option parser below.\n\n  ## Options\n\n  The following options are supported:\n\n    * `:switches` or `:strict` - see the \"Switch definitions\" section below\n    * `:allow_nonexistent_atoms` - see the \"Parsing dynamic switches\" section below\n    * `:aliases` - see the \"Aliases\" section below\n\n  ## Switch definitions\n\n  Switches can be specified via one of two options:\n\n    * `:switches` - defines some switches and their types. This function\n      still attempts to parse switches that are not in this list.\n    * `:strict` - defines strict switches. Any switch in `argv` that is not\n      specified in the list is returned in the invalid options list.\n\n  Both these options accept a keyword list of `{name, type}` tuples where `name`\n  is an atom defining the name of the switch and `type` is an atom that\n  specifies the type for the value of this switch (see the \"Types\" section below\n  for the possible types and more information about type casting).\n\n  Note that you should only supply the `:switches` or the`:strict` option.\n  If you supply both, an `ArgumentError` exception will be raised.\n\n  ### Types\n\n  Switches parsed by `OptionParser` may take zero or one arguments.\n\n  The following switches types take no arguments:\n\n    * `:boolean` - sets the value to `true` when given (see also the\n      \"Negation switches\" section below)\n    * `:count` - counts the number of times the switch is given\n\n  The following switches take one argument:\n\n    * `:integer` - parses the value as an integer\n    * `:float` - parses the value as a float\n    * `:string` - parses the value as a string\n\n  If a switch can't be parsed according to the given type, it is\n  returned in the invalid options list.\n\n  ### Modifiers\n\n  Switches can be specified with modifiers, which change how\n  they behave. The following modifiers are supported:\n\n    * `:keep` - keeps duplicated items instead of overriding them;\n      works with all types except `:count`. Specifying `switch_name: :keep`\n      assumes the type of `:switch_name` will be `:string`.\n\n  To use `:keep` with a type other than `:string`, use a list as the type\n  for the switch. For example: `[foo: [:integer, :keep]]`.\n\n  ### Negation switches\n\n  In case a switch `SWITCH` is specified to have type `:boolean`, it may be\n  passed as `--no-SWITCH` as well which will set the option to `false`:\n\n      iex> OptionParser.parse([\"--no-op\", \"path/to/file\"], switches: [op: :boolean])\n      {[op: false], [\"path/to/file\"], []}\n\n  ### Parsing dynamic switches\n\n  `OptionParser` also includes a dynamic mode where it will attempt to parse\n  switches dynamically. Such can be done by not specifying the `:switches` or\n  `:strict` option.\n\n      iex> OptionParser.parse([\"--debug\"])\n      {[debug: true], [], []}\n\n\n  Switches followed by a value will be assigned the value, as a string. Switches\n  without an argument, like `--debug` in the examples above, will automatically be\n  set to `true`.\n\n  Since Elixir converts switches to atoms, the dynamic mode will only parse\n  switches that translates to atoms used by the runtime. Therefore, the code below\n  likely won't parse the given option since the `:option_parser_example` atom is\n  never used anywhere:\n\n      OptionParser.parse([\"--option-parser-example\"])\n      # Does nothing more...\n\n  However, the code below does since the `:option_parser_example` atom is used\n  at some point later (or earlier) on:\n\n      {opts, _, _} = OptionParser.parse([\"--option-parser-example\"])\n      opts[:option_parser_example]\n\n  In other words, when using dynamic mode, Elixir will do the correct thing and\n  only parse options that are used by the runtime, ignoring all others. If you\n  would like to parse all switches, regardless if they exist or not, you can\n  force creation of atoms by passing `allow_nonexistent_atoms: true` as option.\n  Such option is useful when you are building command-line applications that\n  receive dynamically-named arguments but must be used with care on long-running\n  systems.\n\n  Switches followed by a value will be assigned the value, as a string.\n  Switches without an argument, like `--debug` in the examples above, will\n  automatically be set to `true`.\n\n  ## Aliases\n\n  A set of aliases can be specified in the `:aliases` option:\n\n      iex> OptionParser.parse([\"-d\"], aliases: [d: :debug])\n      {[debug: true], [], []}\n\n  ## Examples\n\n  Here are some examples of working with different types and modifiers:\n\n      iex> OptionParser.parse([\"--unlock\", \"path/to/file\"], strict: [unlock: :boolean])\n      {[unlock: true], [\"path/to/file\"], []}\n\n      iex> OptionParser.parse([\"--unlock\", \"--limit\", \"0\", \"path/to/file\"],\n      ...>                    strict: [unlock: :boolean, limit: :integer])\n      {[unlock: true, limit: 0], [\"path/to/file\"], []}\n\n      iex> OptionParser.parse([\"--limit\", \"3\"], strict: [limit: :integer])\n      {[limit: 3], [], []}\n\n      iex> OptionParser.parse([\"--limit\", \"xyz\"], strict: [limit: :integer])\n      {[], [], [{\"--limit\", \"xyz\"}]}\n\n      iex> OptionParser.parse([\"--verbose\"], switches: [verbose: :count])\n      {[verbose: 1], [], []}\n\n      iex> OptionParser.parse([\"-v\", \"-v\"], aliases: [v: :verbose], strict: [verbose: :count])\n      {[verbose: 2], [], []}\n\n      iex> OptionParser.parse([\"--unknown\", \"xyz\"], strict: [])\n      {[], [\"xyz\"], [{\"--unknown\", nil}]}\n\n      iex> OptionParser.parse([\"--limit\", \"3\", \"--unknown\", \"xyz\"],\n      ...>                    switches: [limit: :integer])\n      {[limit: 3, unknown: \"xyz\"], [], []}\n\n      iex> OptionParser.parse([\"--unlock\", \"path/to/file\", \"--unlock\", \"path/to/another/file\"], strict: [unlock: :keep])\n      {[unlock: \"path/to/file\", unlock: \"path/to/another/file\"], [], []}\n\n  "
@@ -3665,6 +3632,9 @@ return {
     ["parse_head!"] = {
       description = "\nparse_head!(argv, opts \\\\ []) when is_list(argv) and is_list(opts) \n\n  The same as `parse_head/2` but raises an `OptionParser.ParseError`\n  exception if any invalid options are given.\n\n  If there are no errors, returns a `{parsed, rest}` tuple where:\n\n    * `parsed` is the list of parsed switches (same as in `parse_head/2`)\n    * `rest` is the list of arguments (same as in `parse_head/2`)\n\n  ## Examples\n\n      iex> OptionParser.parse_head!([\"--source\", \"lib\", \"path/to/file\", \"--verbose\"],\n      ...>                         switches: [source: :string, verbose: :boolean])\n      {[source: \"lib\"], [\"path/to/file\", \"--verbose\"]}\n\n      iex> OptionParser.parse_head!([\"--number\", \"lib\", \"test/enum_test.exs\", \"--verbose\"],\n      ...>                          strict: [number: :integer])\n      ** (OptionParser.ParseError) 1 error found!\n      --number : Expected type integer, got \"lib\"\n\n      iex> OptionParser.parse_head!([\"--verbose\", \"--source\", \"lib\", \"test/enum_test.exs\", \"--unlock\"],\n      ...>                          strict: [verbose: :integer, source: :integer])\n      ** (OptionParser.ParseError) 2 errors found!\n      --verbose : Missing argument of type integer\n      --source : Expected type integer, got \"lib\"\n  "
     },
+    parsed = {
+      description = "parsed :: Keyword.t\n"
+    },
     split = {
       description = "\nsplit(string)\n\n  Splits a string into `t:argv/0` chunks.\n\n  This function splits the given `string` into a list of strings in a similar\n  way to many shells.\n\n  ## Examples\n\n      iex> OptionParser.split(\"foo bar\")\n      [\"foo\", \"bar\"]\n\n      iex> OptionParser.split(\"foo \\\"bar baz\\\"\")\n      [\"foo\", \"bar baz\"]\n\n  "
     },
@@ -3672,28 +3642,16 @@ return {
       description = "\nto_argv(enum, opts \\\\ [])\n\n  Receives a key-value enumerable and converts it to `t:argv/0`.\n\n  Keys must be atoms. Keys with `nil` value are discarded,\n  boolean values are converted to `--key` or `--no-key`\n  (if the value is `true` or `false`, respectively),\n  and all other values are converted using `Kernel.to_string/1`.\n\n  It is advised to pass to `to_argv/2` the same set of `options`\n  given to `parse/2`. Some switches can only be reconstructed\n  correctly with the `switches` information in hand.\n\n  ## Examples\n\n      iex>  OptionParser.to_argv([foo_bar: \"baz\"])\n      [\"--foo-bar\", \"baz\"]\n      iex>  OptionParser.to_argv([bool: true, bool: false, discarded: nil])\n      [\"--bool\", \"--no-bool\"]\n\n  Some switches will output different values based on the switches\n  flag:\n\n      iex> OptionParser.to_argv([number: 2], switches: [])\n      [\"--number\", \"2\"]\n      iex> OptionParser.to_argv([number: 2], switches: [number: :count])\n      [\"--number\", \"--number\"]\n\n  "
     }
   },
-  Parser = {
-    DSL = {
-      deflexer = {
-        description = "\ndeflexer(char, acc, do: body)\n\ndeflexer(acc, do: body)\n\ndeflexer(match, do: body) when is_binary(match) \n"
-      },
-      description = "false"
-    },
-    description = "false",
-    inspect = {
-      description = "\ninspect(%Version.Requirement{source: source}, _opts)\n\ninspect(self, _opts)\n"
-    },
-    parse_requirement = {
-      description = "\nparse_requirement(source)\n"
-    },
-    parse_version = {
-      description = "\nparse_version(string, approximate? \\\\ false) when is_binary(string) \n"
-    },
-    to_string = {
-      description = "\nto_string(%Version.Requirement{source: source})\n\nto_string(version)\n"
-    }
-  },
   Path = {
+    Wildcard = {
+      description = "false",
+      list_dir = {
+        description = "\nlist_dir(dir)\n"
+      },
+      read_link_info = {
+        description = "\nread_link_info(file)\n"
+      }
+    },
     absname = {
       description = "\nabsname(path, relative_to)\n  Builds a path from `relative_to` to `path`.\n\n  If `path` is already an absolute path, `relative_to` is ignored. See also\n  `relative_to/2`.\n\n  Unlike `expand/2`, no attempt is made to\n  resolve `..`, `.` or `~`.\n\n  ## Examples\n\n      iex> Path.absname(\"foo\", \"bar\")\n      \"bar/foo\"\n\n      iex> Path.absname(\"../x\", \"bar\")\n      \"bar/../x\"\n\n  \n\nabsname(path)\n\n  Converts the given path to an absolute one. Unlike\n  `expand/1`, no attempt is made to resolve `..`, `.` or `~`.\n\n  ## Examples\n\n  ### Unix\n\n      Path.absname(\"foo\")\n      #=> \"/usr/local/foo\"\n\n      Path.absname(\"../x\")\n      #=> \"/usr/local/../x\"\n\n  ### Windows\n\n      Path.absname(\"foo\").\n      #=> \"D:/usr/local/foo\"\n      Path.absname(\"../x\").\n      #=> \"D:/usr/local/../x\"\n\n  "
     },
@@ -3733,6 +3691,9 @@ return {
     },
     type = {
       description = "\ntype(name) when is_list(name) or is_binary(name) \n\n  Returns the path type.\n\n  ## Examples\n\n  ### Unix\n\n      Path.type(\"/\")                #=> :absolute\n      Path.type(\"/usr/local/bin\")   #=> :absolute\n      Path.type(\"usr/local/bin\")    #=> :relative\n      Path.type(\"../usr/local/bin\") #=> :relative\n      Path.type(\"~/file\")           #=> :relative\n\n  ### Windows\n\n      Path.type(\"D:/usr/local/bin\") #=> :absolute\n      Path.type(\"usr/local/bin\")    #=> :relative\n      Path.type(\"D:bar.ex\")         #=> :volumerelative\n      Path.type(\"/bar/foo.ex\")      #=> :volumerelative\n\n  "
+    },
+    wildcard = {
+      description = "\nwildcard(glob, opts \\\\ [])\n\n  Traverses paths according to the given `glob` expression and returns a\n  list of matches.\n\n  The wildcard looks like an ordinary path, except that certain\n  \"wildcard characters\" are interpreted in a special way. The\n  following characters are special:\n\n    * `?` - matches one character\n\n    * `*` - matches any number of characters up to the end of the filename, the\n      next dot, or the next slash\n\n    * `**` - two adjacent `*`'s used as a single pattern will match all\n      files and zero or more directories and subdirectories\n\n    * `[char1,char2,...]` - matches any of the characters listed; two\n      characters separated by a hyphen will match a range of characters.\n      Do not add spaces before and after the comma as it would then match\n      paths containing the space character itself.\n\n    * `{item1,item2,...}` - matches one of the alternatives\n      Do not add spaces before and after the comma as it would then match\n      paths containing the space character itself.\n\n  Other characters represent themselves. Only paths that have\n  exactly the same character in the same position will match. Note\n  that matching is case-sensitive: `\"a\"` will not match `\"A\"`.\n\n  By default, the patterns `*` and `?` do not match files starting\n  with a dot `.` unless `match_dot: true` is given in `opts`.\n\n  ## Examples\n\n  Imagine you have a directory called `projects` with three Elixir projects\n  inside of it: `elixir`, `ex_doc`, and `plug`. You can find all `.beam` files\n  inside the `ebin` directory of each project as follows:\n\n      Path.wildcard(\"projects/*/ebin/**/*.beam\")\n\n  If you want to search for both `.beam` and `.app` files, you could do:\n\n      Path.wildcard(\"projects/*/ebin/**/*.{beam,app}\")\n\n  "
     }
   },
   Port = {
@@ -3849,26 +3810,8 @@ return {
         description = "\nmessage(exception)\n"
       }
     },
-    __builtin__ = {
-      description = "\n__builtin__\nfalse"
-    },
-    __derive__ = {
-      description = "\n__derive__(derives, for, %Macro.Env{} = env) when is_atom(for) \nfalse"
-    },
-    __ensure_defimpl__ = {
-      description = "\n__ensure_defimpl__(protocol, for, env)\nfalse"
-    },
-    __functions_spec__ = {
-      description = "\n__functions_spec__([head | tail])\n\n__functions_spec__([])\nfalse"
-    },
-    __impl__ = {
-      description = "\n__impl__(:for)\n\n__impl__(:protocol)\n\n__impl__(:target)false\n\n__impl__(:protocol)\n\n__impl__(:target)\n\n__impl__(:for)false\n\n__impl__(protocol, opts)\nfalse"
-    },
     __protocol__ = {
-      description = "\n__protocol__(:consolidated?)\n\n__protocol__(:functions)\n\n__protocol__(:module)false\n\n__protocol__(name, [do: block])\nfalse"
-    },
-    ["__spec__?"] = {
-      description = "\n__spec__?(module, name, arity)\nfalse"
+      description = "\n__protocol__(name, [do: block])\nfalse"
     },
     ["assert_impl!"] = {
       description = "\nassert_impl!(protocol, base)\n\n  Checks if the given module is loaded and is an implementation\n  of the given protocol.\n\n  Returns `:ok` if so, otherwise raises `ArgumentError`.\n  "
@@ -3894,15 +3837,6 @@ return {
     },
     extract_protocols = {
       description = "\nextract_protocols(paths)\n\n  Extracts all protocols from the given paths.\n\n  The paths can be either a charlist or a string. Internally\n  they are worked on as charlists, so passing them as lists\n  avoid extra conversion.\n\n  Does not load any of the protocols.\n\n  ## Examples\n\n      # Get Elixir's ebin and retrieve all protocols\n      iex> path = :code.lib_dir(:elixir, :ebin)\n      iex> mods = Protocol.extract_protocols([path])\n      iex> Enumerable in mods\n      true\n\n  "
-    },
-    impl_for = {
-      description = "\nimpl_for(_)\n\nimpl_for(data) when :erlang.unquote(guard)(data) \n\nimpl_for(%{__struct__: struct}) when :erlang.is_atom(struct) \n\nimpl_for(data)\nfalse"
-    },
-    ["impl_for!"] = {
-      description = "\nimpl_for!(data)\nfalse"
-    },
-    t = {
-      description = "t :: term\n"
     }
   },
   Range = {
@@ -3966,9 +3900,55 @@ return {
     }
   },
   Regex = {
+    CompileError = {},
+    compile = {
+      description = "\ncompile(source, options) when is_list(options) \n\ncompile(source, options) when is_binary(options) \n\ncompile(source, options \\\\ \"\")\n\n  Compiles the regular expression.\n\n  The given options can either be a binary with the characters\n  representing the same regex options given to the `~r` sigil,\n  or a list of options, as expected by the Erlang's [`:re` module](http://www.erlang.org/doc/man/re.html).\n\n  It returns `{:ok, regex}` in case of success,\n  `{:error, reason}` otherwise.\n\n  ## Examples\n\n      iex> Regex.compile(\"foo\")\n      {:ok, ~r\"foo\"}\n\n      iex> Regex.compile(\"*foo\")\n      {:error, {'nothing to repeat', 0}}\n\n  "
+    },
+    ["compile!"] = {
+      description = "\ncompile!(source, options \\\\ \"\")\n\n  Compiles the regular expression according to the given options.\n  Fails with `Regex.CompileError` if the regex cannot be compiled.\n  "
+    },
     description = "\n  Provides regular expressions for Elixir. Built on top of Erlang's `:re`\n  module.\n\n  As the [`:re` module](http://www.erlang.org/doc/man/re.html), Regex is based\n  on PCRE (Perl Compatible Regular Expressions). More information can be\n  found in the [`:re` module documentation](http://www.erlang.org/doc/man/re.html).\n\n  Regular expressions in Elixir can be created using `Regex.compile!/2`\n  or using the special form with [`~r`](Kernel.html#sigil_r/2) or [`~R`](Kernel.html#sigil_R/2):\n\n      # A simple regular expressions that matches foo anywhere in the string\n      ~r/foo/\n\n      # A regular expression with case insensitive and Unicode options\n      ~r/foo/iu\n\n  A Regex is represented internally as the `Regex` struct. Therefore,\n  `%Regex{}` can be used whenever there is a need to match on them.\n  Keep in mind it is not guaranteed two regular expressions from the\n  same source are equal, for example:\n\n      ~r/(?<foo>.)(?<bar>.)/ == ~r/(?<foo>.)(?<bar>.)/\n\n  may return `true` or `false` depending on your machine, endianess, available\n  optimizations and others. You can, however, retrieve the source of a\n  compiled regular expression by accessing the `source` field, and then\n  compare those directly:\n\n      ~r/(?<foo>.)(?<bar>.)/.source == ~r/(?<foo>.)(?<bar>.)/.source\n\n  ## Modifiers\n\n  The modifiers available when creating a Regex are:\n\n    * `unicode` (u) - enables Unicode specific patterns like `\\p` and change\n      modifiers like `\\w`, `\\W`, `\\s` and friends to also match on Unicode.\n      It expects valid Unicode strings to be given on match\n\n    * `caseless` (i) - adds case insensitivity\n\n    * `dotall` (s) - causes dot to match newlines and also set newline to\n      anycrlf; the new line setting can be overridden by setting `(*CR)` or\n      `(*LF)` or `(*CRLF)` or `(*ANY)` according to re documentation\n\n    * `multiline` (m) - causes `^` and `$` to mark the beginning and end of\n      each line; use `\\A` and `\\z` to match the end or beginning of the string\n\n    * `extended` (x) - whitespace characters are ignored except when escaped\n      and allow `#` to delimit comments\n\n    * `firstline` (f) - forces the unanchored pattern to match before or at the\n      first newline, though the matched text may continue over the newline\n\n    * `ungreedy` (U) - inverts the \"greediness\" of the regexp\n      (the previous `r` option is deprecated in favor of `U`)\n\n  The options not available are:\n\n    * `anchored` - not available, use `^` or `\\A` instead\n    * `dollar_endonly` - not available, use `\\z` instead\n    * `no_auto_capture` - not available, use `?:` instead\n    * `newline` - not available, use `(*CR)` or `(*LF)` or `(*CRLF)` or\n      `(*ANYCRLF)` or `(*ANY)` at the beginning of the regexp according to the\n      re documentation\n\n  ## Captures\n\n  Many functions in this module handle what to capture in a regex\n  match via the `:capture` option. The supported values are:\n\n    * `:all` - all captured subpatterns including the complete matching string\n      (this is the default)\n\n    * `:first` - only the first captured subpattern, which is always the\n      complete matching part of the string; all explicitly captured subpatterns\n      are discarded\n\n    * `:all_but_first`- all but the first matching subpattern, i.e. all\n      explicitly captured subpatterns, but not the complete matching part of\n      the string\n\n    * `:none` - does not return matching subpatterns at all\n\n    * `:all_names` - captures all names in the Regex\n\n    * `list(binary)` - a list of named captures to capture\n\n  ",
+    escape = {
+      description = "\nescape(string) when is_binary(string) \n\n  Escapes a string to be literally matched in a regex.\n\n  ## Examples\n\n      iex> Regex.escape(\".\")\n      \"\\\\.\"\n\n      iex> Regex.escape(\"\\\\what if\")\n      \"\\\\\\\\what\\\\ if\"\n\n  "
+    },
+    ["match?"] = {
+      description = "\nmatch?(%Regex{re_pattern: compiled}, string) when is_binary(string) \n\n  Returns a boolean indicating whether there was a match or not.\n\n  ## Examples\n\n      iex> Regex.match?(~r/foo/, \"foo\")\n      true\n\n      iex> Regex.match?(~r/foo/, \"bar\")\n      false\n\n  "
+    },
+    named_captures = {
+      description = "\nnamed_captures(regex, string, options \\\\ []) when is_binary(string) \n\n  Returns the given captures as a map or `nil` if no captures are\n  found. The option `:return` can be set to `:index` to get indexes\n  back.\n\n  ## Examples\n\n      iex> Regex.named_captures(~r/c(?<foo>d)/, \"abcd\")\n      %{\"foo\" => \"d\"}\n\n      iex> Regex.named_captures(~r/a(?<foo>b)c(?<bar>d)/, \"abcd\")\n      %{\"bar\" => \"d\", \"foo\" => \"b\"}\n\n      iex> Regex.named_captures(~r/a(?<foo>b)c(?<bar>d)/, \"efgh\")\n      nil\n\n  "
+    },
+    names = {
+      description = "\nnames(%Regex{re_pattern: re_pattern})\n\n  Returns a list of names in the regex.\n\n  ## Examples\n\n      iex> Regex.names(~r/(?<foo>bar)/)\n      [\"foo\"]\n\n  "
+    },
+    opts = {
+      description = "\nopts(%Regex{opts: opts})\n\n  Returns the regex options as a string.\n\n  ## Examples\n\n      iex> Regex.opts(~r(foo)m)\n      \"m\"\n\n  "
+    },
+    re_pattern = {
+      description = "\nre_pattern(%Regex{re_pattern: compiled})\n\n  Returns the underlying `re_pattern` in the regular expression.\n  "
+    },
+    ["regex?"] = {
+      description = "\nregex?(_)\n\nregex?(%Regex{})\n\nregex?(term)\n\n  Returns `true` if the given `term` is a regex.\n  Otherwise returns `false`.\n\n  ## Examples\n\n      iex> Regex.regex?(~r/foo/)\n      true\n\n      iex> Regex.regex?(0)\n      false\n\n  "
+    },
+    replace = {
+      description = "\nreplace(regex, string, replacement, options)\n      when is_binary(string) and is_function(replacement) and is_list(options)  \n\nreplace(regex, string, replacement, options)\n      when is_binary(string) and is_binary(replacement) and is_list(options) \n\nreplace(regex, string, replacement, options \\\\ [])\n\n  Receives a regex, a binary and a replacement, returns a new\n  binary where all matches are replaced by the replacement.\n\n  The replacement can be either a string or a function. The string\n  is used as a replacement for every match and it allows specific\n  captures to be accessed via `\\N` or `\\g{N}`, where `N` is the\n  capture. In case `\\0` is used, the whole match is inserted. Note\n  that in regexes the backslash needs to be escaped, hence in practice\n  you'll need to use `\\\\N` and `\\\\g{N}`.\n\n  When the replacement is a function, the function may have arity\n  N where each argument maps to a capture, with the first argument\n  being the whole match. If the function expects more arguments\n  than captures found, the remaining arguments will receive `\"\"`.\n\n  ## Options\n\n    * `:global` - when `false`, replaces only the first occurrence\n      (defaults to `true`)\n\n  ## Examples\n\n      iex> Regex.replace(~r/d/, \"abc\", \"d\")\n      \"abc\"\n\n      iex> Regex.replace(~r/b/, \"abc\", \"d\")\n      \"adc\"\n\n      iex> Regex.replace(~r/b/, \"abc\", \"[\\\\0]\")\n      \"a[b]c\"\n\n      iex> Regex.replace(~r/a(b|d)c/, \"abcadc\", \"[\\\\1]\")\n      \"[b][d]\"\n\n      iex> Regex.replace(~r/\\.(\\d)$/, \"500.5\", \".\\\\g{1}0\")\n      \"500.50\"\n\n      iex> Regex.replace(~r/a(b|d)c/, \"abcadc\", fn _, x -> \"[#{x}]\" end)\n      \"[b][d]\"\n\n      iex> Regex.replace(~r/a/, \"abcadc\", \"A\", global: false)\n      \"Abcadc\"\n\n  "
+    },
+    run = {
+      description = "\nrun(%Regex{re_pattern: compiled}, string, options) when is_binary(string) \n\nrun(regex, string, options \\\\ [])\n\n  Runs the regular expression against the given string until the first match.\n  It returns a list with all captures or `nil` if no match occurred.\n\n  ## Options\n\n    * `:return`  - sets to `:index` to return indexes. Defaults to `:binary`.\n    * `:capture` - what to capture in the result. Check the moduledoc for `Regex`\n      to see the possible capture values.\n\n  ## Examples\n\n      iex> Regex.run(~r/c(d)/, \"abcd\")\n      [\"cd\", \"d\"]\n\n      iex> Regex.run(~r/e/, \"abcd\")\n      nil\n\n      iex> Regex.run(~r/c(d)/, \"abcd\", return: :index)\n      [{2, 2}, {3, 1}]\n\n  "
+    },
+    scan = {
+      description = "\nscan(%Regex{re_pattern: compiled}, string, options) when is_binary(string) \n\nscan(regex, string, options \\\\ [])\n\n  Same as `run/3`, but scans the target several times collecting all\n  matches of the regular expression.\n\n  A list of lists is returned, where each entry in the primary list represents a\n  match and each entry in the secondary list represents the captured contents.\n\n  ## Options\n\n    * `:return`  - sets to `:index` to return indexes. Defaults to `:binary`.\n    * `:capture` - what to capture in the result. Check the moduledoc for `Regex`\n      to see the possible capture values.\n\n  ## Examples\n\n      iex> Regex.scan(~r/c(d|e)/, \"abcd abce\")\n      [[\"cd\", \"d\"], [\"ce\", \"e\"]]\n\n      iex> Regex.scan(~r/c(?:d|e)/, \"abcd abce\")\n      [[\"cd\"], [\"ce\"]]\n\n      iex> Regex.scan(~r/e/, \"abcd\")\n      []\n\n      iex> Regex.scan(~r/\\p{Sc}/u, \"$, £, and €\")\n      [[\"$\"], [\"£\"], [\"€\"]]\n\n  "
+    },
+    source = {
+      description = "\nsource(%Regex{source: source})\n\n  Returns the regex source as a binary.\n\n  ## Examples\n\n      iex> Regex.source(~r(foo))\n      \"foo\"\n\n  "
+    },
+    split = {
+      description = "\nsplit(%Regex{re_pattern: compiled}, string, opts) when is_binary(string) and is_list(opts) \n\nsplit(%Regex{}, \"\", opts)\n\nsplit(regex, string, options \\\\ [])\n\n  Splits the given target based on the given pattern and in the given number of\n  parts.\n\n  ## Options\n\n    * `:parts` - when specified, splits the string into the given number of\n      parts. If not specified, `:parts` defaults to `:infinity`, which will\n      split the string into the maximum number of parts possible based on the\n      given pattern.\n\n    * `:trim` - when `true`, removes empty strings (`\"\"`) from the result.\n\n    * `:on` - specifies which captures to split the string on, and in what\n      order. Defaults to `:first` which means captures inside the regex do not\n      affect the splitting process.\n\n    * `:include_captures` - when `true`, includes in the result the matches of\n      the regular expression. Defaults to `false`.\n\n  ## Examples\n\n      iex> Regex.split(~r{-}, \"a-b-c\")\n      [\"a\", \"b\", \"c\"]\n\n      iex> Regex.split(~r{-}, \"a-b-c\", [parts: 2])\n      [\"a\", \"b-c\"]\n\n      iex> Regex.split(~r{-}, \"abc\")\n      [\"abc\"]\n\n      iex> Regex.split(~r{}, \"abc\")\n      [\"a\", \"b\", \"c\", \"\"]\n\n      iex> Regex.split(~r{a(?<second>b)c}, \"abc\")\n      [\"\", \"\"]\n\n      iex> Regex.split(~r{a(?<second>b)c}, \"abc\", on: [:second])\n      [\"a\", \"c\"]\n\n      iex> Regex.split(~r{(x)}, \"Elixir\", include_captures: true)\n      [\"Eli\", \"x\", \"ir\"]\n\n      iex> Regex.split(~r{a(?<second>b)c}, \"abc\", on: [:second], include_captures: true)\n      [\"a\", \"b\", \"c\"]\n\n  "
+    },
     t = {
       description = "t :: %__MODULE__{re_pattern: term, source: binary, opts: binary}\n"
+    },
+    unescape_map = {
+      description = "\nunescape_map(_)\n\nunescape_map(?a)\n\nunescape_map(?v)\n\nunescape_map(?t)\n\nunescape_map(?r)\n\nunescape_map(?n)\n\nunescape_map(?f)\nfalse"
     }
   },
   Registry = {
@@ -4062,11 +4042,6 @@ return {
     },
     whereis_name = {
       description = "\nwhereis_name({registry, key})\nfalse"
-    }
-  },
-  Requirement = {
-    t = {
-      description = "t :: %__MODULE__{}\n"
     }
   },
   RuntimeError = {},
@@ -4770,18 +4745,6 @@ return {
       description = "\nyield_many(tasks, timeout \\\\ 5000)\n\n  Yields to multiple tasks in the given time interval.\n\n  This function receives a list of tasks and waits for their\n  replies in the given time interval. It returns a list\n  of tuples of two elements, with the task as the first element\n  and the yielded result as the second.\n\n  Similarly to `yield/2`, each task's result will be\n\n    * `{:ok, term}` if the task has successfully reported its\n      result back in the given time interval\n    * `{:exit, reason}` if the task has died\n    * `nil` if the task keeps running past the timeout\n\n  Check `yield/2` for more information.\n\n  ## Example\n\n  `Task.yield_many/2` allows developers to spawn multiple tasks\n  and retrieve the results received in a given timeframe.\n  If we combine it with `Task.shutdown/2`, it allows us to gather\n  those results and cancel the tasks that have not replied in time.\n\n  Let's see an example.\n\n      tasks =\n        for i <- 1..10 do\n          Task.async(fn ->\n            Process.sleep(i * 1000)\n            i\n          end)\n        end\n\n      tasks_with_results = Task.yield_many(tasks, 5000)\n\n      results = Enum.map(tasks_with_results, fn {task, res} ->\n        # Shutdown the tasks that did not reply nor exit\n        res || Task.shutdown(task, :brutal_kill)\n      end)\n\n      # Here we are matching only on {:ok, value} and\n      # ignoring {:exit, _} (crashed tasks) and `nil` (no replies)\n      for {:ok, value} <- results do\n        IO.inspect value\n      end\n\n  In the example above, we create tasks that sleep from 1\n  up to 10 seconds and return the amount of seconds they slept.\n  If you execute the code all at once, you should see 1 up to 5\n  printed, as those were the tasks that have replied in the\n  given time. All other tasks will have been shut down using\n  the `Task.shutdown/2` call.\n  "
     }
   },
-  Test = {
-    description = "\n    A struct that keeps information about the test.\n\n    It is received by formatters and contains the following fields:\n\n      * `:name`  - the test name\n      * `:case`  - the test case\n      * `:state` - the test error state (see ExUnit.state)\n      * `:time`  - the time to run the test\n      * `:tags`  - the test tags\n      * `:logs`  - the captured logs\n\n    ",
-    t = {
-      description = "t :: %__MODULE__{\n"
-    }
-  },
-  TestCase = {
-    description = "\n    A struct that keeps information about the test case.\n\n    It is received by formatters and contains the following fields:\n\n      * `:name`  - the test case name\n      * `:state` - the test error state (see ExUnit.state)\n      * `:tests` - all tests for this case\n\n    ",
-    t = {
-      description = "t :: %__MODULE__{\n"
-    }
-  },
   Time = {
     compare = {
       description = "\ncompare(time1, time2)\n\n  Compares two `Time` structs.\n\n  Returns `:gt` if first time is later than the second\n  and `:lt` for vice versa. If the two times are equal\n  `:eq` is returned\n\n  ## Examples\n\n      iex> Time.compare(~T[16:04:16], ~T[16:04:28])\n      :lt\n      iex> Time.compare(~T[16:04:16.01], ~T[16:04:16.001])\n      :gt\n\n  This function can also be used to compare across more\n  complex calendar types by considering only the time fields:\n\n      iex> Time.compare(~N[2015-01-01 16:04:16], ~N[2015-01-01 16:04:28])\n      :lt\n      iex> Time.compare(~N[2015-01-01 16:04:16.01], ~N[2000-01-01 16:04:16.001])\n      :gt\n\n  "
@@ -4818,26 +4781,6 @@ return {
       description = "\nto_string(%{hour: hour, minute: minute, second: second, microsecond: microsecond})\n\nto_string(%{hour: hour, minute: minute, second: second, microsecond: microsecond})\n\nto_string(time)\n\n  Converts the given time to a string.\n\n  ### Examples\n\n      iex> Time.to_string(~T[23:00:00])\n      \"23:00:00\"\n      iex> Time.to_string(~T[23:00:00.001])\n      \"23:00:00.001\"\n      iex> Time.to_string(~T[23:00:00.123456])\n      \"23:00:00.123456\"\n\n      iex> Time.to_string(~N[2015-01-01 23:00:00.001])\n      \"23:00:00.001\"\n      iex> Time.to_string(~N[2015-01-01 23:00:00.123456])\n      \"23:00:00.123456\"\n\n  "
     }
   },
-  TimeoutError = {
-    configuration = {
-      description = "\nconfiguration\n\n  Returns ExUnit configuration.\n  "
-    },
-    configure = {
-      description = "\nconfigure(options)\n\n  Configures ExUnit.\n\n  ## Options\n\n  ExUnit supports the following options:\n\n    * `:assert_receive_timeout` - the timeout to be used on `assert_receive`\n      calls. Defaults to 100ms.\n\n    * `:capture_log` - if ExUnit should default to keeping track of log messages\n      and print them on test failure. Can be overridden for individual tests via\n      `@tag capture_log: false`. Defaults to `false`.\n\n    * `:case_load_timeout` - the timeout to be used when loading a test case.\n      Defaults to `60_000` milliseconds.\n\n    * `:colors` - a keyword list of colors to be used by some formatters.\n      The only option so far is `[enabled: boolean]` which defaults to `IO.ANSI.enabled?/0`\n\n    * `:formatters` - the formatters that will print results;\n      defaults to `[ExUnit.CLIFormatter]`\n\n    * `:max_cases` - maximum number of cases to run in parallel;\n      defaults to `:erlang.system_info(:schedulers_online) * 2` to\n      optimize both CPU-bound and IO-bound tests\n\n    * `:trace` - sets ExUnit into trace mode, this sets `:max_cases` to `1` and\n      prints each test case and test while running\n\n    * `:autorun` - if ExUnit should run by default on exit; defaults to `true`\n\n    * `:include` - specifies which tests are run by skipping tests that do not\n      match the filter. Keep in mind that all tests are included by default, so unless they are\n      excluded first, the `:include` option has no effect.\n\n    * `:exclude` - specifies which tests are run by skipping tests that match the\n      filter\n\n    * `:refute_receive_timeout` - the timeout to be used on `refute_receive`\n      calls (defaults to 100ms)\n\n    * `:seed` - an integer seed value to randomize the test suite\n\n    * `:stacktrace_depth` - configures the stacktrace depth to be used\n      on formatting and reporters (defaults to 20)\n\n    * `:timeout` - sets the timeout for the tests (default 60_000ms)\n\n  "
-    },
-    message = {
-      description = "\nmessage(%{timeout: timeout, type: type})\n"
-    },
-    plural_rule = {
-      description = "\nplural_rule(word, pluralization) when is_binary(word) and is_binary(pluralization) \n  Registers a `pluralization` for `word`.\n\n  If one is already registered, it is replaced.\n  \n\nplural_rule(word) when is_binary(word) \n\n  Returns the pluralization for `word`.\n\n  If one is not registered, returns the word appended with an \"s\".\n  "
-    },
-    run = {
-      description = "\nrun\n\n  API used to run the tests. It is invoked automatically\n  if ExUnit is started via `ExUnit.start/1`.\n\n  Returns a map containing the total number of tests, the number\n  of failures and the number of skipped tests.\n  "
-    },
-    start = {
-      description = "\nstart(options \\\\ [])\n  Starts ExUnit and automatically runs tests right before the\n  VM terminates. It accepts a set of options to configure `ExUnit`\n  (the same ones accepted by `configure/1`).\n\n  If you want to run tests manually, you can set `:autorun` to `false`.\n  \n\nstart(_type, [])\nfalse"
-    }
-  },
   TokenMissingError = {
     message = {
       description = "\nmessage(%{file: file, line: line, description: description})\n"
@@ -4867,12 +4810,6 @@ return {
     }
   },
   URI = {
-    HTTP = {
-      parse = {
-        description = "\nparse(info)\n"
-      }
-    },
-    Parser = {},
     ["char_reserved?"] = {
       description = "\nchar_reserved?(char) when char in 0..0x10FFFF \n\n  Checks if the character is a \"reserved\" character in a URI.\n\n  Reserved characters are specified in\n  [RFC 3986, section 2.2](https://tools.ietf.org/html/rfc3986#section-2.2).\n\n  ## Examples\n\n      iex> URI.char_reserved?(?+)\n      true\n\n  "
     },
@@ -4934,18 +4871,61 @@ return {
     }
   },
   Version = {
+    InvalidRequirementError = {},
+    InvalidVersionError = {},
+    Parser = {
+      DSL = {
+        deflexer = {
+          description = "\ndeflexer(char, acc, do: body)\n\ndeflexer(acc, do: body)\n\ndeflexer(match, do: body) when is_binary(match) \n"
+        },
+        description = "false"
+      },
+      description = "false",
+      parse_requirement = {
+        description = "\nparse_requirement(source)\n"
+      },
+      parse_version = {
+        description = "\nparse_version(string, approximate? \\\\ false) when is_binary(string) \n"
+      }
+    },
+    Requirement = {
+      t = {
+        description = "t :: %__MODULE__{}\n"
+      }
+    },
     build = {
       description = "build :: String.t | nil\n"
     },
+    compare = {
+      description = "\ncompare(version1, version2)\n\n  Compares two versions. Returns `:gt` if the first version is greater than\n  the second one, and `:lt` for vice versa. If the two versions are equal `:eq`\n  is returned.\n\n  Pre-releases are strictly less than their corresponding release versions.\n\n  Patch segments are compared lexicographically if they are alphanumeric, and\n  numerically otherwise.\n\n  Build segments are ignored, if two versions differ only in their build segment\n  they are considered to be equal.\n\n  Raises a `Version.InvalidVersionError` exception if any of the two are not\n  parsable. If given an already parsed version this function won't raise.\n\n  ## Examples\n\n      iex> Version.compare(\"2.0.1-alpha1\", \"2.0.0\")\n      :gt\n\n      iex> Version.compare(\"1.0.0-beta\", \"1.0.0-rc1\")\n      :lt\n\n      iex> Version.compare(\"1.0.0-10\", \"1.0.0-2\")\n      :gt\n\n      iex> Version.compare(\"2.0.1+build0\", \"2.0.1\")\n      :eq\n\n      iex> Version.compare(\"invalid\", \"2.0.1\")\n      ** (Version.InvalidVersionError) invalid\n\n  "
+    },
+    compile_requirement = {
+      description = "\ncompile_requirement(%Requirement{matchspec: spec} = req)\n\n  Compiles a requirement to its internal representation with\n  `:ets.match_spec_compile/1` for faster matching.\n\n  The internal representation is opaque and can not be converted to external\n  term format and then back again without losing its properties (meaning it\n  can not be sent to a process on another node and still remain a valid\n  compiled match_spec, nor can it be stored on disk).\n  "
+    },
     description = "\n  Functions for parsing and matching versions against requirements.\n\n  A version is a string in a specific format or a `Version`\n  generated after parsing via `Version.parse/1`.\n\n  `Version` parsing and requirements follow\n  [SemVer 2.0 schema](http://semver.org/).\n\n  ## Versions\n\n  In a nutshell, a version is represented by three numbers:\n\n      MAJOR.MINOR.PATCH\n\n  Pre-releases are supported by appending `-[0-9A-Za-z-\\.]`:\n\n      \"1.0.0-alpha.3\"\n\n  Build information can be added by appending `+[0-9A-Za-z-\\.]`:\n\n      \"1.0.0-alpha.3+20130417140000\"\n\n  ## Struct\n\n  The version is represented by the Version struct and fields\n  are named according to SemVer: `:major`, `:minor`, `:patch`,\n  `:pre` and `:build`.\n\n  ## Requirements\n\n  Requirements allow you to specify which versions of a given\n  dependency you are willing to work against. It supports common\n  operators like `>=`, `<=`, `>`, `==` and friends that\n  work as one would expect:\n\n      # Only version 2.0.0\n      \"== 2.0.0\"\n\n      # Anything later than 2.0.0\n      \"> 2.0.0\"\n\n  Requirements also support `and` and `or` for complex conditions:\n\n      # 2.0.0 and later until 2.1.0\n      \">= 2.0.0 and < 2.1.0\"\n\n  Since the example above is such a common requirement, it can\n  be expressed as:\n\n      \"~> 2.0.0\"\n\n  `~>` will never include pre-release versions of its upper bound.\n  It can also be used to set an upper bound on only the major\n  version part. See the table below for `~>` requirements and\n  their corresponding translation.\n\n  `~>`           | Translation\n  :------------- | :---------------------\n  `~> 2.0.0`     | `>= 2.0.0 and < 2.1.0`\n  `~> 2.1.2`     | `>= 2.1.2 and < 2.2.0`\n  `~> 2.1.3-dev` | `>= 2.1.3-dev and < 2.2.0`\n  `~> 2.0`       | `>= 2.0.0 and < 3.0.0`\n  `~> 2.1`       | `>= 2.1.0 and < 3.0.0`\n\n  When `allow_pre: false` is set the requirement will not match a\n  pre-release version unless the operand is a pre-release version.\n  The default is to always allow pre-releases but note that in\n  Hex `:allow_pre` is set to `false.` See the table below for examples.\n\n  Requirement    | Version     | `:allow_pre` | Matches\n  :------------- | :---------- | :----------- | :------\n  `~> 2.0`       | `2.1.0`     | -            | `true`\n  `~> 2.0`       | `3.0.0`     | -            | `false`\n  `~> 2.0.0`     | `2.0.1`     | -            | `true`\n  `~> 2.0.0`     | `2.1.0`     | -            | `false`\n  `~> 2.1.2`     | `2.1.3-dev` | `true`       | `true`\n  `~> 2.1.2`     | `2.1.3-dev` | `false`      | `false`\n  `~> 2.1-dev`   | `2.2.0-dev` | `false`      | `true`\n  `~> 2.1.2-dev` | `2.1.3-dev` | `false`      | `true`\n  `>= 2.1.0`     | `2.2.0-dev` | `false`      | `false`\n  `>= 2.1.0-dev` | `2.2.3-dev` | `true`       | `true`\n\n  ",
+    inspect = {
+      description = "\ninspect(%Version.Requirement{source: source}, _opts)\n\ninspect(self, _opts)\n"
+    },
     major = {
       description = "major :: String.t | non_neg_integer\n"
+    },
+    ["match?"] = {
+      description = "\nmatch?(version, %Requirement{matchspec: spec, compiled: true}, opts)\n\nmatch?(version, %Requirement{matchspec: spec, compiled: false}, opts)\n\nmatch?(version, requirement, opts) when is_binary(requirement) \n\nmatch?(version, requirement, opts \\\\ [])\n\n  Checks if the given version matches the specification.\n\n  Returns `true` if `version` satisfies `requirement`, `false` otherwise.\n  Raises a `Version.InvalidRequirementError` exception if `requirement` is not\n  parsable, or `Version.InvalidVersionError` if `version` is not parsable.\n  If given an already parsed version and requirement this function won't\n  raise.\n\n  ## Options\n\n    * `:allow_pre` - when `false` pre-release versions will not match\n      unless the operand is a pre-release version, see the table above\n      for examples  (default: `true`);\n\n  ## Examples\n\n      iex> Version.match?(\"2.0.0\", \">1.0.0\")\n      true\n\n      iex> Version.match?(\"2.0.0\", \"==1.0.0\")\n      false\n\n      iex> Version.match?(\"foo\", \"==1.0.0\")\n      ** (Version.InvalidVersionError) foo\n\n      iex> Version.match?(\"2.0.0\", \"== ==1.0.0\")\n      ** (Version.InvalidRequirementError) == ==1.0.0\n\n  "
     },
     matchable = {
       description = "matchable :: {major :: major,\n"
     },
     minor = {
       description = "minor :: non_neg_integer | nil\n"
+    },
+    parse = {
+      description = "\nparse(string) when is_binary(string) \n\n  Parses a version string into a `Version`.\n\n  ## Examples\n\n      iex> {:ok, version} = Version.parse(\"2.0.1-alpha1\")\n      iex> version\n      #Version<2.0.1-alpha1>\n\n      iex> Version.parse(\"2.0-alpha1\")\n      :error\n\n  "
+    },
+    ["parse!"] = {
+      description = "\nparse!(string) when is_binary(string) \n\n  Parses a version string into a `Version`.\n\n  If `string` is an invalid version, an `InvalidVersionError` is raised.\n\n  ## Examples\n\n      iex> Version.parse!(\"2.0.1-alpha1\")\n      #Version<2.0.1-alpha1>\n\n      iex> Version.parse!(\"2.0-alpha1\")\n      ** (Version.InvalidVersionError) 2.0-alpha1\n\n  "
+    },
+    parse_requirement = {
+      description = "\nparse_requirement(string) when is_binary(string) \n\n  Parses a version requirement string into a `Version.Requirement`.\n\n  ## Examples\n\n      iex> {:ok, req} = Version.parse_requirement(\"== 2.0.1\")\n      iex> req\n      #Version.Requirement<== 2.0.1>\n\n      iex> Version.parse_requirement(\"== == 2.0.1\")\n      :error\n\n  "
     },
     patch = {
       description = "patch :: non_neg_integer | nil\n"
@@ -4959,26 +4939,38 @@ return {
     t = {
       description = "t :: %__MODULE__{\n"
     },
+    to_string = {
+      description = "\nto_string(%Version.Requirement{source: source})\n\nto_string(version)\n"
+    },
     version = {
       description = "version :: String.t | t\n"
-    }
-  },
-  Wildcard = {
-    description = "false",
-    list_dir = {
-      description = "\nlist_dir(dir)\n"
-    },
-    read_link_info = {
-      description = "\nread_link_info(file)\n"
-    },
-    wildcard = {
-      description = "\nwildcard(glob, opts \\\\ [])\n\n  Traverses paths according to the given `glob` expression and returns a\n  list of matches.\n\n  The wildcard looks like an ordinary path, except that certain\n  \"wildcard characters\" are interpreted in a special way. The\n  following characters are special:\n\n    * `?` - matches one character\n\n    * `*` - matches any number of characters up to the end of the filename, the\n      next dot, or the next slash\n\n    * `**` - two adjacent `*`'s used as a single pattern will match all\n      files and zero or more directories and subdirectories\n\n    * `[char1,char2,...]` - matches any of the characters listed; two\n      characters separated by a hyphen will match a range of characters.\n      Do not add spaces before and after the comma as it would then match\n      paths containing the space character itself.\n\n    * `{item1,item2,...}` - matches one of the alternatives\n      Do not add spaces before and after the comma as it would then match\n      paths containing the space character itself.\n\n  Other characters represent themselves. Only paths that have\n  exactly the same character in the same position will match. Note\n  that matching is case-sensitive: `\"a\"` will not match `\"A\"`.\n\n  By default, the patterns `*` and `?` do not match files starting\n  with a dot `.` unless `match_dot: true` is given in `opts`.\n\n  ## Examples\n\n  Imagine you have a directory called `projects` with three Elixir projects\n  inside of it: `elixir`, `ex_doc`, and `plug`. You can find all `.beam` files\n  inside the `ebin` directory of each project as follows:\n\n      Path.wildcard(\"projects/*/ebin/**/*.beam\")\n\n  If you want to search for both `.beam` and `.app` files, you could do:\n\n      Path.wildcard(\"projects/*/ebin/**/*.{beam,app}\")\n\n  "
     }
   },
   WithClauseError = {
     message = {
       description = "\nmessage(exception)\n"
     }
+  },
+  __builtin__ = {
+    description = "\n__builtin__\nfalse"
+  },
+  __derive__ = {
+    description = "\n__derive__(derives, for, %Macro.Env{} = env) when is_atom(for) \nfalse"
+  },
+  __ensure_defimpl__ = {
+    description = "\n__ensure_defimpl__(protocol, for, env)\nfalse"
+  },
+  __functions_spec__ = {
+    description = "\n__functions_spec__([head | tail])\n\n__functions_spec__([])\nfalse"
+  },
+  __impl__ = {
+    description = "\n__impl__(:for)\n\n__impl__(:protocol)\n\n__impl__(:target)false\n\n__impl__(:protocol)\n\n__impl__(:target)\n\n__impl__(:for)false\n\n__impl__(protocol, opts)\nfalse"
+  },
+  __protocol__ = {
+    description = "\n__protocol__(:consolidated?)\n\n__protocol__(:functions)\n\n__protocol__(:module)\nfalse"
+  },
+  ["__spec__?"] = {
+    description = "\n__spec__?(module, name, arity)\nfalse"
   },
   abs = {
     description = "\nabs(number)\n\n  Returns an integer or float which is the arithmetical absolute value of `number`.\n\n  Allowed in guard tests. Inlined by the compiler.\n\n  ## Examples\n\n      iex> abs(-3.33)\n      3.33\n\n      iex> abs(-3)\n      3\n\n  "
@@ -5061,6 +5053,12 @@ return {
   },
   ["if"] = {
     description = "\nif(condition, clauses)\n\n  Provides an `if/2` macro.\n\n  This macro expects the first argument to be a condition and the second\n  argument to be a keyword list.\n\n  ## One-liner examples\n\n      if(foo, do: bar)\n\n  In the example above, `bar` will be returned if `foo` evaluates to\n  `true` (i.e., it is neither `false` nor `nil`). Otherwise, `nil` will be\n  returned.\n\n  An `else` option can be given to specify the opposite:\n\n      if(foo, do: bar, else: baz)\n\n  ## Blocks examples\n\n  It's also possible to pass a block to the `if/2` macro. The first\n  example above would be translated to:\n\n      if foo do\n        bar\n      end\n\n  Note that `do/end` become delimiters. The second example would\n  translate to:\n\n      if foo do\n        bar\n      else\n        baz\n      end\n\n  In order to compare more than two clauses, the `cond/1` macro has to be used.\n  "
+  },
+  impl_for = {
+    description = "\nimpl_for(_)\n\nimpl_for(data) when :erlang.unquote(guard)(data) \n\nimpl_for(%{__struct__: struct}) when :erlang.is_atom(struct) \n\nimpl_for(data)\nfalse"
+  },
+  ["impl_for!"] = {
+    description = "\nimpl_for!(data)\nfalse"
   },
   inspect = {
     description = "\ninspect(arg, opts \\\\ []) when is_list(opts) \n\n  Inspects the given argument according to the `Inspect` protocol.\n  The second argument is a keyword list with options to control\n  inspection.\n\n  ## Options\n\n  `inspect/2` accepts a list of options that are internally\n  translated to an `Inspect.Opts` struct. Check the docs for\n  `Inspect.Opts` to see the supported options.\n\n  ## Examples\n\n      iex> inspect(:foo)\n      \":foo\"\n\n      iex> inspect [1, 2, 3, 4, 5], limit: 3\n      \"[1, 2, 3, ...]\"\n\n      iex> inspect [1, 2, 3], pretty: true, width: 0\n      \"[1,\\n 2,\\n 3]\"\n\n      iex> inspect(\"olá\" <> <<0>>)\n      \"<<111, 108, 195, 161, 0>>\"\n\n      iex> inspect(\"olá\" <> <<0>>, binaries: :as_strings)\n      \"\\\"olá\\\\0\\\"\"\n\n      iex> inspect(\"olá\", binaries: :as_binaries)\n      \"<<111, 108, 195, 161>>\"\n\n      iex> inspect('bar')\n      \"'bar'\"\n\n      iex> inspect([0 | 'bar'])\n      \"[0, 98, 97, 114]\"\n\n      iex> inspect(100, base: :octal)\n      \"0o144\"\n\n      iex> inspect(100, base: :hex)\n      \"0x64\"\n\n  Note that the `Inspect` protocol does not necessarily return a valid\n  representation of an Elixir term. In such cases, the inspected result\n  must start with `#`. For example, inspecting a function will return:\n\n      inspect fn a, b -> a + b end\n      #=> #Function<...>\n\n  "
@@ -5184,6 +5182,9 @@ return {
   },
   ["struct!"] = {
     description = "\nstruct!(struct, kv) when is_map(struct) \n\nstruct!(struct, kv) when is_atom(struct) \n\nstruct!(struct, kv \\\\ [])\n\n  Similar to `struct/2` but checks for key validity.\n\n  The function `struct!/2` emulates the compile time behaviour\n  of structs. This means that:\n\n    * when building a struct, as in `struct!(SomeStruct, key: :value)`,\n      it is equivalent to `%SomeStruct{key: :value}` and therefore this\n      function will check if every given key-value belongs to the struct.\n      If the struct is enforcing any key via `@enforce_keys`, those will\n      be enforced as well;\n\n    * when updating a struct, as in `struct!(%SomeStruct{}, key: :value)`,\n      it is equivalent to `%SomeStruct{struct | key: :value}` and therefore this\n      function will check if every given key-value belongs to the struct.\n      However, updating structs does not enforce keys, as keys are enforced\n      only when building;\n\n  "
+  },
+  t = {
+    description = "t :: term\n"
   },
   throw = {
     description = "\nthrow(term)\n\n  A non-local return from a function.\n\n  Check `Kernel.SpecialForms.try/1` for more information.\n\n  Inlined by the compiler.\n  "

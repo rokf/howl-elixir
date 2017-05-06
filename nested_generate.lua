@@ -10,12 +10,11 @@ local P,R,S,V =
   lpeg.S,
   lpeg.V
 
-local C,Ct,Cg,Cp,Cg,Cc =
+local C,Ct,Cg,Cp,Cc =
   lpeg.C,
   lpeg.Ct,
   lpeg.Cg,
   lpeg.Cp,
-  lpeg.Cg,
   lpeg.Cc
 
 function mnpat(start,stop)
@@ -94,14 +93,25 @@ function run_over_matches(mc)
   local cm = whole_api -- current module
   local ctd = "" -- current typedoc
   local cs = "" -- current spec
+
+  -- TBC
+  local ci = 0 -- current indent TODO
+  local last_module = whole_api -- TODO
+  local cmi = 0 -- current module indent TOOD
+
   for i,v in ipairs(mc) do
+
+    if v.indent ~= nil then -- TODO
+      ci = v.indent
+      if ci <= cmi then cm = last_module end
+    end
+
     if v.mod ~= nil then -- new module
-      cm = whole_api -- reset to root
+      last_module = cm
+      -- cm = whole_api
+      cmi = ci -- as this is a new module set the current module indent
       for m in string.gmatch(v.modname, "%a+") do
-        -- print('MOD:',m)
-        if cm[m] == nil then
-          cm[m] = {}
-        end
+        if cm[m] == nil then cm[m] = {} end
         cm = cm[m]
       end
     end

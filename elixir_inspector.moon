@@ -1,6 +1,6 @@
 
-dogma = bundle_load 'dogma_parser'
-credo = bundle_load 'credo_parser'
+dogma = bundle_load 'dogma_flycheck'
+credo = bundle_load 'credo_oneline'
 
 import Process from howl.io
 
@@ -15,7 +15,7 @@ insp = (buffer) ->
   print(combined_path)
   outp = {}
   if howl.config.elixir_linter == 'credo'
-    output, err = Process.execute('mix credo', {
+    output, err = Process.execute('mix credo --format=oneline', {
       working_directory: proj.root.path
       env: {
         HOME: home_path
@@ -23,10 +23,9 @@ insp = (buffer) ->
         LC_ALL: 'en_US.UTF-8'
       }
     })
-    print('ERR',err)
     outp = credo.parse(output, howl.app.editor.buffer.file, proj.root.path)
   elseif howl.config.elixir_linter == 'dogma'
-    output, err = Process.execute('mix dogma', {
+    output, err = Process.execute('mix dogma --format=flycheck', {
       working_directory: proj.root.path
       env: {
         HOME: home_path
@@ -34,8 +33,8 @@ insp = (buffer) ->
         LC_ALL: 'en_US.UTF-8'
       }
     })
-    print('ERR',err)
     outp = dogma.parse(output, howl.app.editor.buffer.file, proj.root.path)
+    print('dogma #outp',#outp)
   else -- 'none'
     return nil
 
