@@ -29,7 +29,7 @@ local H = P {
   defmodule = V('indentation') * P'defmodule' * V'ws' * (C(V'module_name') / function (mn)
     print('module:', mn)
     return { mod = 1, modname = mn }
-  end) * V'ws' * P('do'),
+  end) * V'ws' * P'do',
   defprotocol = P'defprotocol' * V'ws' * (C(V'module_name') / function (mn)
     return { mod = 1, modname = mn }
   end) * V'ws' * P'do',
@@ -60,7 +60,7 @@ local H = P {
   -- DEFINE
   fdef = Ct(V'left_part' * V'optional_guard' * V'right_part'),
   hungry_fdef = Ct(V'left_part' * V'optional_guard' * V'hungry_right_part'),
-  left_part = V'name_with_brackets' + V'name_no_brackets', -- OPTIMIZE?
+  left_part = V'name_with_brackets' + V'name_no_brackets',
   name_with_brackets = C(V'fident') * C(P'(' * (P(1) - P')')^1 * P')'),
   name_no_brackets = C(V'fident'),
   optional_guard = C(V'ws' * P'when' * (P(1) - P'do')^1)^-1,

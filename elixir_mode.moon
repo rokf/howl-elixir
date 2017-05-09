@@ -1,8 +1,5 @@
 
 -- https://developer.gnome.org/glib/stable/glib-regex-syntax.html
--- https://github.com/pkulchenko/serpent
-
--- serpent = require 'serpent'
 pattern_utils = bundle_load 'pattern_utils'
 
 class ElixirMode
@@ -13,7 +10,7 @@ class ElixirMode
 
   comment_syntax: '#'
 
-  resolve_type: (context) => -- fat arrow because it is a method
+  resolve_type: (context) =>
     scope_changes = pattern_utils.find_scope_changers(howl.app.editor.buffer.text)
     pfx = context.prefix
     parts = {}
