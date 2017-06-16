@@ -1,10 +1,9 @@
-![Drawing](elixir.png)
+<p align="center"> <img width="150" src="elixir.png"> </p>
 
 **Includes**:
 - API **completion** and **docs** with respect for imports and aliases
 - static source checks via **dogma** or **credo**
 - syntax highlighting
-- structure view
 
 **Configuration variables:**
 - elixir_linter : either `dogma`, `credo` or `none`
@@ -24,9 +23,9 @@ needed executables for Elixir can be found.
 
 **API generation:**
 To generate your own `api.lua` file you have to
-- write a gsources.lua file next to `generate.lua`
+- write a gsources.lua file next to `apigen.moon`
 - it has to return a table with strings, those are paths the script should use to generate the API
-- call `lua generate.lua` and the new `api.lua` file will be generated
+- call `moon apigen.moon` and the new `api.lua` file will be generated
 
 **Notes:**
 - The **project path** in Howl has to point to the root of your **mix** project.

@@ -13,8 +13,7 @@ class ElixirMode
   resolve_type: (context) =>
     scope_changes = pattern_utils.find_scope_changers(howl.app.editor.buffer.text)
     pfx = context.prefix
-    parts = {}
-    all_parts = {}
+    parts,all_parts = {},{}
     all_parts = [p for p in pfx\gmatch '[%w%?_%!]+']
     fname = all_parts[#all_parts]
     leading = pfx\umatch r'((?:\\w+[.:])*\\w+)[.:]\\w*[\\!\\?]?$'
