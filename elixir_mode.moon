@@ -92,8 +92,7 @@ class ElixirMode
   default_config: {
     complete: 'manual' -- manually activate completions
     word_pattern: '[%w?_!]+' -- isn't used by default from API related func
-    inspectors: { 'elixir' } -- dogma and credo checks
-    auto_inspect: 'save' -- inspect only on save
+    inspectors_on_save: { 'elixir' } -- dogma and credo checks
   }
 
   indentation: {

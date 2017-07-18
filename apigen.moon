@@ -63,15 +63,20 @@ run_over_matches = (mc) ->
         if not cm[m] then cm[m] = {}
         cm = cm[m]
     if v.doctype
-      if (not cm.description) and v.doctype == 'mod' then cm.description = v.txt
-      elseif v.doctype == 'doc' then cd = v.txt
+      if (not cm.description) and v.doctype == 'mod'
+        cm.description = v.txt
+      elseif v.doctype == 'doc'
+        cd = v.txt
     if v.scope == 'public'
       fn = v.data[1]
       if not cm[fn]
         cm[fn] = {}
-        cm[fn].description = '\n' .. table.concat(v.data) .. "\n" .. cd
+        cm[fn].description = '\n' ..
+          table.concat(v.data) .. "\n" .. cd
       else
-        cm[fn].description = '\n' .. table.concat(v.data) .. cd ..  "\n" .. cm[fn].description
+        cm[fn].description = '\n' ..
+          table.concat(v.data) .. cd ..
+          "\n" .. cm[fn].description
       cd = ''
 
 checkdir = (path) ->

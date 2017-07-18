@@ -2,10 +2,12 @@
 howl.util.lpeg_lexer ->
 
   kw = capture 'keyword', word {
-    'cond','case', 'defmodule', 'defstruct', 'defmacro', 'defprotocol', 'defexception', 'defdelegate'
-    'defimpl', 'try','catch', 'do', 'end', 'after', 'if', 'else', 'unless',
-    'fn','defp','def', 'and', 'or', 'rescue',
-    'receive', 'alias', 'use', 'require', 'import', 'for', 'when'
+    'cond','case', 'defmodule', 'defstruct', 'defmacro',
+    'defprotocol', 'defexception', 'defdelegate',
+    'defimpl', 'try','catch', 'do', 'end', 'after',
+    'if', 'else', 'unless', 'fn','defp','def',
+    'and', 'or', 'rescue', 'receive', 'alias', 'use',
+    'require', 'import', 'for', 'when'
   }
 
   comment = capture 'comment', '#' * scan_until(eol)
