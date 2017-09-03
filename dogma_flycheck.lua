@@ -2,7 +2,7 @@
 -- lib/todo.ex:2:1: W: Module Todo is missing a @moduledoc.
 
 local function parse(report,fname_filter,root_path)
-  local format = "([%w%.%/]+):(%d+):%d+: (%a): ([^\n]+)"
+  local format = "([%w%.%/_]+):(%d+):%d+: (%a): ([^\n]+)"
   local out = {}
   for f,l,t,m in report:gmatch(format) do
     local msgtype = "error"

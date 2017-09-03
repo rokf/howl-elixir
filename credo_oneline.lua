@@ -13,7 +13,8 @@ end), 'type') * P']'
 local integer = R'19' * R'09'^0
 local filename = Cg((P(1) - P':')^1,'filename')
 local message =( P(1) - P'\n')^1
-local line = logtype * P' ' * (P(1) - R('az','AZ'))^1 * filename * P':' * Cg(integer / tonumber,'line') * P':' * integer * P' ' * Cg(message,'message') * P'\n'^0
+local line = logtype * P' ' * (P(1) - R('az','AZ'))^1 * filename * P':' *
+  Cg(integer / tonumber,'line') * P':' * integer * P' ' * Cg(message,'message') * P'\n'^0
 local pattern = Ct(Ct(line)^0)
 
 local function parse(report, fname_filter, root_path)
