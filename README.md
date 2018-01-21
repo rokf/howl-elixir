@@ -2,11 +2,11 @@
 
 **Includes**:
 - API **completion** and **docs** with respect for imports and aliases
-- static source checks via **dogma** or **credo**
+- static source checks via **credo**
 - syntax highlighting
 
 **Configuration variables:**
-- elixir_linter : either `dogma`, `credo` or `none`
+- elixir_linter : either `credo` or `none`
 - elixir_path : a string, example: `/home/rokf/.asdf/bin:/home/rokf/.asdf/shims`
 
 The path is prepended to the `PATH` env variable used by Howl so that `mix` and other

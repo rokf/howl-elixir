@@ -1,4 +1,3 @@
-
 -- https://developer.gnome.org/glib/stable/glib-regex-syntax.html
 pattern_utils = bundle_load 'pattern_utils'
 
@@ -92,7 +91,7 @@ class ElixirMode
   default_config: {
     complete: 'manual' -- manually activate completions
     word_pattern: '[%w?_!]+' -- isn't used by default from API related func
-    inspectors_on_save: { 'elixir' } -- dogma and credo checks
+    inspectors_on_save: { 'elixir' }
   }
 
   indentation: {

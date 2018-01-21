@@ -29,7 +29,6 @@ howl.config.define({
   description: 'Chosen Elixir linter'
   type_of: 'string'
   options: {
-    'dogma',
     'credo',
     'none'
   }
