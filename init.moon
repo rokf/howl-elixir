@@ -25,18 +25,18 @@ unload = ->
   howl.inspection.unregister 'elixir'
 
 howl.config.define({
-  name: 'elixir_linter'
-  description: 'Chosen Elixir linter'
+  name: 'elixir_inspector'
+  description: 'Which Elixir inspector to use'
   type_of: 'string'
   options: {
     'credo',
-    'none'
+    'format'
   }
 })
 
 howl.config.define({
   name: 'elixir_path'
-  description: 'Location of Elixir, mix, ...'
+  description: 'Optional location of Elixir, mix, ...'
   type_of: 'string'
 })
 
