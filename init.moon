@@ -1,40 +1,37 @@
 import Process from howl.io
 import BufferPopup from howl.ui
 
-serpent = require 'serpent'
+register_modes = () ->
+  howl.mode.register
+    name: 'elixir'
+    extensions: { 'ex', 'exs' }
+    create: bundle_load('elixir_mode')
+  howl.mode.register
+    name: 'eex'
+    extensions: { 'eex' }
+    create: -> bundle_load('eex_mode')
 
--- MODES
-mode_reg =
-  name: 'elixir'
-  extensions: { 'ex', 'exs' }
-  create: bundle_load('elixir_mode')
+register_inspectors = () ->
+  howl.inspection.register
+    name: 'format'
+    factory: ->
+      c = howl.app.editor.cursor.line
+      {
+        cmd: 'mix format --check-equivalent <file>'
+        parse: (o) ->
+          howl.app.editor.buffer\reload true
+          howl.app.editor.cursor.line = c
+          if #o != 0
+            { { line: 1, message: o, type: 'error' } }
+          else
+            {}
+      }
+  howl.inspection.register
+    name: 'credo'
+    factory: (buffer) -> { cmd: "cat <file> | mix credo --format=flycheck --read-from-stdin" }
 
-howl.mode.register(mode_reg)
-
-mode_reg_eex =
-  name: 'eex'
-  extensions: { 'eex' }
-  create: -> bundle_load('eex_mode')
-
-howl.mode.register(mode_reg_eex)
-
--- INSPECTION
-howl.inspection.register {
-  name: 'elixir'
-  factory: ->
-    bundle_load 'elixir_inspector'
-}
-
--- CONFIGURATION
-howl.config.define({
-  name: 'elixir_inspector'
-  description: 'Which Elixir inspector to use'
-  type_of: 'string'
-  options: {
-    'credo',
-    'format'
-  }
-})
+register_modes!
+register_inspectors!
 
 alias_str = () ->
   buf = howl.app.editor.buffer.text
@@ -102,7 +99,8 @@ howl.command.register {
 unload = ->
   howl.mode.unregister 'elixir'
   howl.mode.unregister 'eex'
-  howl.inspection.unregister 'elixir'
+  howl.inspection.unregister 'format'
+  howl.inspection.unregister 'credo'
   howl.completion.unregister 'elixir_completer'
   howl.command.unregister 'elixir-doc'
 

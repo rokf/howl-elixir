@@ -17,7 +17,7 @@ class ElixirMode
   default_config: {
     complete: 'manual' -- manually activate completions
     word_pattern: '[%w?_!]+'
-    inspectors_on_save: { 'elixir' }
+    inspectors_on_save: { 'format' }
   }
 
   indentation: {
