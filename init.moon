@@ -1,5 +1,6 @@
 import Process from howl.io
 import BufferPopup from howl.ui
+import activities from howl
 
 register_modes = () ->
   howl.mode.register
@@ -54,15 +55,15 @@ class ElixirCompleter
     else
       last = nil -- last is also part of module string
     module = table.concat(parts,'.')
-    cmd = 'elixir -e "import IEx.Helpers; ' .. alias_str! .. ' exports ' .. module .. '"'
     process = Process {
-      cmd: cmd
+      cmd: 'elixir -e "import IEx.Helpers; ' .. alias_str! .. ' exports ' .. module .. '"'
       read_stdout: true
+      read_stderr: true
     }
+    stdout, _ = activities.run_process {title: 'getting completion options with elixir'}, process
     howl.app.editor.buffer.config.word_pattern = oldwp
-    process\wait!
-    if process.successful
-      exports = [e for e in string.gmatch(process.stdout\read_all!, "[?!_%a]+")]
+    if #stdout ~= 0
+      exports = [e for e in string.gmatch(stdout, "[?!_%a]+")]
       if last == nil then return exports
       filtered = {}
       for v in *exports
@@ -70,7 +71,9 @@ class ElixirCompleter
       return filtered
     return {}
 
-howl.completion.register name: 'elixir_completer', factory: ElixirCompleter
+howl.completion.register
+  name: 'elixir_completer'
+  factory: ElixirCompleter
 
 -- COMMANDS
 howl.command.register {
@@ -83,11 +86,12 @@ howl.command.register {
     process = Process {
       cmd: 'elixir -e "import IEx.Helpers; ' .. alias_str! .. ' h ' .. ctx .. '"'
       read_stdout: true
+      read_stderr: true
     }
+    stdout, _ = activities.run_process {title: 'fetching docs with elixir'}, process
     howl.app.editor.buffer.config.word_pattern = oldwp
-    process\wait!
-    if process.successful
-      return process.stdout\read_all!
+    if #stdout ~= 0
+      return stdout
     return nil
   handler: (v) ->
     if not v then return nil
