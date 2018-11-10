@@ -5,6 +5,7 @@ class ElixirMode
     @completers = { 'elixir_completer', 'in_buffer' }
 
   comment_syntax: '#'
+  word_pattern: '[%w?_!]+'
 
   auto_pairs: {
     '(': ')'
@@ -16,7 +17,6 @@ class ElixirMode
 
   default_config: {
     complete: 'manual' -- manually activate completions
-    word_pattern: '[%w?_!]+'
     inspectors_on_save: { 'format' }
   }
 

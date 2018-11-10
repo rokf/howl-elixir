@@ -46,8 +46,8 @@ alias_str = () ->
 -- CUSTOM COMPLETION
 class ElixirCompleter
   complete: (ctx) =>
-    oldwp = howl.app.editor.buffer.config.word_pattern
-    howl.app.editor.buffer.config.word_pattern = "[.%w?_!]+"
+    oldwp = howl.app.editor.buffer.mode.word_pattern
+    howl.app.editor.buffer.mode.word_pattern = "[.%w?_!]+"
     parts = [p for p in string.gmatch(tostring(ctx.word),"%a+")]
     last = parts[#parts]
     if not string.match(last,"[A-Z]%a*")
@@ -61,7 +61,7 @@ class ElixirCompleter
       read_stderr: true
     }
     stdout, _ = activities.run_process {title: 'getting completion options with elixir'}, process
-    howl.app.editor.buffer.config.word_pattern = oldwp
+    howl.app.editor.buffer.mode.word_pattern = oldwp
     if #stdout ~= 0
       exports = [e for e in string.gmatch(stdout, "[?!_%a]+")]
       if last == nil then return exports
@@ -80,8 +80,8 @@ howl.command.register {
   name: 'elixir-doc'
   description: 'Show documentation for the current context'
   input: () ->
-    oldwp = howl.app.editor.buffer.config.word_pattern
-    howl.app.editor.buffer.config.word_pattern = "[.%w?_!]+"
+    oldwp = howl.app.editor.buffer.mode.word_pattern
+    howl.app.editor.buffer.mode.word_pattern = "[.%w?_!]+"
     ctx = tostring(howl.app.editor.current_context.word)
     process = Process {
       cmd: 'elixir -e "import IEx.Helpers; ' .. alias_str! .. ' h ' .. ctx .. '"'
@@ -89,7 +89,7 @@ howl.command.register {
       read_stderr: true
     }
     stdout, _ = activities.run_process {title: 'fetching docs with elixir'}, process
-    howl.app.editor.buffer.config.word_pattern = oldwp
+    howl.app.editor.buffer.mode.word_pattern = oldwp
     if #stdout ~= 0
       return stdout
     return nil

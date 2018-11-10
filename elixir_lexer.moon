@@ -1,4 +1,3 @@
-
 howl.util.lpeg_lexer ->
 
   kw = capture 'keyword', word {
